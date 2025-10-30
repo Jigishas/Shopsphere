@@ -1,16 +1,38 @@
-import express from 'express';
-import cors from 'cors';
-import bodyParser from 'body-parser';
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const nodemailer = require('nodemailer');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 const app = express();
 const PORT = 5000;
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
+app.use(cors({
+  origin: '*',
+  Credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 
-// In-memory storage for users (in a real app, use a database)
-let users = [];
+}));
+app.use(bodyParser.json());
+app.use(express.json())
+// Connect to MongoDB
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, {   
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    });
+    console.log('MongoDB connected successfully');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1); // Exit process with failure
+  }
+};
+connectDB();
+
 
 // Signup endpoint
 app.post('/api/signup', (req, res) => {
@@ -37,6 +59,7 @@ app.post('/api/signup', (req, res) => {
   };
 
   users.push(newUser);
+  newUser.save();
 
   res.status(201).json({
     message: 'User created successfully',
@@ -84,15 +107,6 @@ app.post('/api/contact', (req, res) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  // For testing purposes, we'll simulate email sending
-  // In production, replace with actual email service
-  console.log('=== CONTACT FORM SUBMISSION ===');
-  console.log(`Name: ${name}`);
-  console.log(`Email: ${email}`);
-  console.log(`Subject: ${subject}`);
-  console.log(`Message: ${message}`);
-  console.log(`To: Jigishaflamings336@gmail.com`);
-  console.log('================================');
 
   // Simulate email sending delay
   setTimeout(() => {
@@ -100,7 +114,7 @@ app.post('/api/contact', (req, res) => {
     // In production, uncomment the nodemailer code below
     res.status(200).json({ message: 'Message sent successfully' });
 
-    /*
+    
     // Create transporter (uncomment for production)
     const transporter = nodemailer.createTransporter({
       service: 'gmail',
@@ -134,7 +148,7 @@ app.post('/api/contact', (req, res) => {
       console.log('Email sent:', info.response);
       res.status(200).json({ message: 'Message sent successfully' });
     });
-    */
+    
   }, 1000); // 1 second delay to simulate email sending
 });
 
