@@ -58,8 +58,16 @@ app.post('/api/signup', (req, res) => {
     createdAt: new Date()
   };
 
-  users.push(newUser);
-  newUser.save();
+  //users.push(newUser);
+  const savedUser=() =>{
+    try{
+      newUser.save();
+      console.log('User saved successfully');
+    } catch (error){
+      console.error('Error saving user:', error);
+    }
+  }
+
 
   res.status(201).json({
     message: 'User created successfully',
