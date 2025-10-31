@@ -3,7 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
-const router = require('./Routers/routers');
+//const router = require('./Routers/routers');
 require('dotenv').config();
 
 
@@ -11,16 +11,29 @@ const app = express();
 const PORT = 5000;
 
 // Middleware
-app.use(cors({
-  origin: '*',
-  Credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+ app.use(cors({
+   origin: 'http://localhost:5173',
+   credentials: true,
+   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+   allowedHeaders: [
+    'Content-Type', 
+    'Authorization', 
+    'X-Requested-With',
+    'Accept',
+    'Origin',
+    'Access-Control-Request-Method',
+    'Access-Control-Request-Headers'
+  ],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
+}
+));
 
-}));
+//app.options('*', cors()); 
+
 app.use(bodyParser.json());
 app.use(express.json());
-app.use('/', router);
+//app.use('/', router);
 // Connect to MongoDB
 const connectDB = async () => {
   try {
