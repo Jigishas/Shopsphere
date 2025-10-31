@@ -3,7 +3,9 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
+const router = require('./Routers/routers');
 require('dotenv').config();
+
 
 const app = express();
 const PORT = 5000;
@@ -17,7 +19,8 @@ app.use(cors({
 
 }));
 app.use(bodyParser.json());
-app.use(express.json())
+app.use(express.json());
+app.use('/', router);
 // Connect to MongoDB
 const connectDB = async () => {
   try {
