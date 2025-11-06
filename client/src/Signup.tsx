@@ -28,7 +28,6 @@ function Signup() {
     try {
       const response = await fetch('http://localhost:5000/api/signup', {
         method: 'POST',
-        credentials:'same-origin',
         headers: {
           'Content-Type': 'application/json',
         },
