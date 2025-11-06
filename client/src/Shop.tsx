@@ -4,6 +4,18 @@ import { ShoppingCart, Heart, Search, ShoppingBag, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ShopFooter from './ShopFooter';
 
+interface Product {
+  _id: string;
+  id: number;
+  name: string;
+  category: string;
+  price: number;
+  originalPrice?: number;
+  image: string;
+  badge?: string;
+  isDeal: boolean;
+}
+
 // Product Data
 const products = [
     {
