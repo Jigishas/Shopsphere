@@ -3,6 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
+const Product = require('./model/products');
 //const router = require('./Routers/routers');
 require('dotenv').config();
 
