@@ -118,10 +118,14 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ message: 'Error logging in', error: error.message });
   }
 });
-
 // Get all users (for testing purposes)
-app.get('/api/users', (req, res) => {
-  res.json(users);
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users', error: error.message });
+  }
 });
 
 // Contact form endpoint
