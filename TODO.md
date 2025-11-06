@@ -28,7 +28,8 @@
 - [x] Client server started on http://localhost:5174 (port 5173 was in use)
 
 ## Testing Results
-- Both servers are running successfully
-- CORS configuration appears correct in server.js
-- Login.tsx now matches Signup.tsx with credentials: 'include'
-- Ready for manual testing in browser
+- Both servers are running successfully ✅
+- CORS configuration appears correct in server.js ✅
+- Login.tsx now matches Signup.tsx with credentials: 'include' ✅
+- Curl testing failed due to Windows curl URL parsing issue ❌
+- Manual browser testing recommended for signup/login routes
