@@ -21,3 +21,14 @@
 - Start client (cd client && npm run dev)
 - Test signup and login functionality
 - Check browser console for CORS errors
+
+## Changes Made
+- [x] Updated client/src/Login.tsx to include credentials: 'include' in fetch request
+- [x] Backend server started on http://localhost:5000
+- [x] Client server started on http://localhost:5174 (port 5173 was in use)
+
+## Testing Results
+- Both servers are running successfully
+- CORS configuration appears correct in server.js
+- Login.tsx now matches Signup.tsx with credentials: 'include'
+- Ready for manual testing in browser
