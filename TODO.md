@@ -1,12 +1,12 @@
 # TODO: Implement CRUD Operations for Products
 
 ## Backend Tasks
-- [ ] Add GET /api/products route to fetch all products
-- [ ] Add GET /api/products/:id route to fetch a single product
-- [ ] Add POST /api/products route to create a new product
-- [ ] Add PUT /api/products/:id route to update a product
-- [ ] Add DELETE /api/products/:id route to delete a product
-- [ ] Import Product model in server.js
+- [x] Add GET /api/products route to fetch all products
+- [x] Add GET /api/products/:id route to fetch a single product
+- [x] Add POST /api/products route to create a new product
+- [x] Add PUT /api/products/:id route to update a product
+- [x] Add DELETE /api/products/:id route to delete a product
+- [x] Import Product model in server.js
 
 ## Frontend Tasks
 - [ ] Update Shop.tsx to fetch products from /api/products on component mount

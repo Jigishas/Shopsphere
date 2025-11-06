@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Heart, Search, ShoppingBag, User } from 'lucide-react';
+import { ShoppingCart, Heart, Search, ShoppingBag, User, Plus, Edit, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ShopFooter from './ShopFooter';
 
@@ -51,19 +51,32 @@ function Shop() {
   const [filter, setFilter] = useState('all');
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [formData, setFormData] = useState({
+    id: 0,
+    name: '',
+    category: '',
+    price: 0,
+    originalPrice: 0,
+    image: '',
+    badge: '',
+    isDeal: false
+  });
 
   // Fetch products from API
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/products');
+      const data = await response.json();
+      setProducts(data);
+      setFilteredProducts(data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/products');
-        const data = await response.json();
-        setProducts(data);
-        setFilteredProducts(data);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-      }
-    };
     fetchProducts();
   }, []);
 
@@ -129,6 +142,78 @@ function Shop() {
     setCart(prevCart => prevCart.filter(item => item.id !== productId));
   };
 
+  const handleCreateProduct = () => {
+    setEditingProduct(null);
+    setFormData({
+      id: Math.max(...products.map(p => p.id), 0) + 1,
+      name: '',
+      category: '',
+      price: 0,
+      originalPrice: 0,
+      image: '',
+      badge: '',
+      isDeal: false
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setFormData({
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      originalPrice: product.originalPrice || 0,
+      image: product.image,
+      badge: product.badge || '',
+      isDeal: product.isDeal
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteProduct = async (productId: string) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/products/${productId}`, {
+          method: 'DELETE'
+        });
+        if (response.ok) {
+          fetchProducts();
+        } else {
+          console.error('Error deleting product');
+        }
+      } catch (error) {
+        console.error('Error deleting product:', error);
+      }
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const url = editingProduct
+        ? `http://localhost:5000/api/products/${editingProduct._id}`
+        : 'http://localhost:5000/api/products';
+      const method = editingProduct ? 'PUT' : 'POST';
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+      if (response.ok) {
+        setIsModalOpen(false);
+        fetchProducts();
+      } else {
+        console.error('Error saving product');
+      }
+    } catch (error) {
+      console.error('Error saving product:', error);
+    }
+  };
+
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
@@ -157,6 +242,13 @@ function Shop() {
                 <input type="text" placeholder="Search products..." className="pl-4 pr-10 py-2 rounded-full bg-white/20 text-white placeholder-white/70 border-none outline-none w-64 focus:ring-2 focus:ring-accent transition-all" />
                 <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
               </div>
+              <button
+                onClick={handleCreateProduct}
+                className="flex items-center gap-2 bg-accent text-white px-4 py-2 rounded-full hover:bg-accent/80 transition-colors"
+              >
+                <Plus size={18} />
+                Add Product
+              </button>
               <Link to="/signup" className="flex items-center gap-2 bg-accent text-white px-4 py-2 rounded-full hover:bg-accent/80 transition-colors">
                 <User size={18} />
                 Sign Up
