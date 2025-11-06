@@ -14,7 +14,7 @@ const PORT = 5000;
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: [
@@ -52,13 +52,7 @@ const connectDB = async () => {
 connectDB();
 
 
-// Handle preflight requests for signup
-app.options('/api/signup', (req, res) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin, Access-Control-Request-Method, Access-Control-Request-Headers');
-  res.sendStatus(204);
-});
+// The cors middleware handles preflight requests automatically
 
 // Signup endpoint
 app.post('/api/signup', async (req, res) => {
