@@ -177,6 +177,83 @@ app.post('/api/contact', (req, res) => {
   }, 1000); // 1 second delay to simulate email sending
 });
 
+// Product CRUD routes
+
+// GET all products
+app.get('/api/products', async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching products', error: error.message });
+  }
+});
+
+// GET single product by ID
+app.get('/api/products/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching product', error: error.message });
+  }
+});
+
+// POST create new product
+app.post('/api/products', async (req, res) => {
+  try {
+    const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
+    const newProduct = new Product({
+      id,
+      name,
+      category,
+      price,
+      originalPrice,
+      image,
+      badge,
+      isDeal
+    });
+    const savedProduct = await newProduct.save();
+    res.status(201).json(savedProduct);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating product', error: error.message });
+  }
+});
+
+// PUT update product
+app.put('/api/products/:id', async (req, res) => {
+  try {
+    const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      { id, name, category, price, originalPrice, image, badge, isDeal },
+      { new: true }
+    );
+    if (!updatedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json(updatedProduct);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating product', error: error.message });
+  }
+});
+
+// DELETE product
+app.delete('/api/products/:id', async (req, res) => {
+  try {
+    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+    if (!deletedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting product', error: error.message });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
