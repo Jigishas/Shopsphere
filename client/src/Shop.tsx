@@ -67,7 +67,9 @@ function Shop() {
   // Fetch products from API
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/products');
+      const response = await fetch('http://localhost:5000/api/products', {
+        credentials: 'include'
+      });
       const data = await response.json();
       setProducts(data);
       setFilteredProducts(data);
@@ -176,7 +178,8 @@ function Shop() {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         const response = await fetch(`http://localhost:5000/api/products/${productId}`, {
-          method: 'DELETE'
+          method: 'DELETE',
+          credentials: 'include'
         });
         if (response.ok) {
           fetchProducts();
@@ -201,6 +204,7 @@ function Shop() {
         headers: {
           'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify(formData)
       });
       if (response.ok) {
