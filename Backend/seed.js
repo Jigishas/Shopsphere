@@ -459,7 +459,9 @@ const products = [
         category: "fashion",
         price: 29.99,
         originalPrice: 39.99,
-        image: "https://images.unsplash.com/photo-1601762603332-fd61e28b698a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+        image: "https://images.unsplash.com/photo-1601762603332-fd61e28b698a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+        badge: "",
+        isDeal: false
     }
 ];
 
