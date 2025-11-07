@@ -25,4 +25,25 @@ const getProductsById = async (req, res) => {
     res.status(500).json({ message: 'Error fetching product', error: error.message });
   }
 };
+
+const postProduct = async (req, res) => {
+  try {
+    const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
+    const newProduct = new Product({
+      id,
+      name,
+      category,
+      price,
+      originalPrice,
+      image,
+      badge,
+      isDeal
+    });
+    const savedProduct = await newProduct.save();
+    res.status(201).json(savedProduct);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating product', error: error.message });
+  }
+};
+
 module.exports = { getAllProducts, getProductsById };
