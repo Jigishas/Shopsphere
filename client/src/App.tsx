@@ -128,7 +128,7 @@ function App() {
   };
 
   const decreaseQuantity = (productId: number) => {
-    setCart(prevCart =>prevCart.map(item =>
+    setCart(prevCart => prevCart.map(item =>
         item.id === productId && item.quantity > 1
           ? { ...item, quantity: item.quantity - 1 }
           : item
