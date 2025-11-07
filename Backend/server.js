@@ -201,27 +201,6 @@ app.use('/api/products', router);
 app.use('/api/products/:id', router);
 
 
-// POST create new product
-// app.post('/api/products', async (req, res) => {
-//   try {
-//     const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
-//     const newProduct = new Product({
-//       id,
-//       name,
-//       category,
-//       price,
-//       originalPrice,
-//       image,
-//       badge,
-//       isDeal
-//     });
-//     const savedProduct = await newProduct.save();
-//     res.status(201).json(savedProduct);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error creating product', error: error.message });
-//   }
-// });
-
 // PUT update product
 // app.put('/api/products/:id', async (req, res) => {
 //   try {
