@@ -6,5 +6,6 @@ const { getAllProducts } = require('../controllers/productsControllers');
 router.get('/api/products', getAllProducts);
 router.get('/api/products/:id', getProductsById);
 router.post('/api/products', postProduct);
+router.put('/api/products/:id', putProduct);
 
 module.exports = router;
