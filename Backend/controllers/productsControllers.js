@@ -29,7 +29,7 @@ const getProductsById = async (req, res) => {
 const postProduct = async (req, res) => {
   try {
     const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
-    const newProduct = new Product({
+    const newProduct = new Products({
       id,
       name,
       category,
@@ -49,7 +49,7 @@ const postProduct = async (req, res) => {
 const putProduct= async (req, res) => {
   try {
     const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
-    const updatedProduct = await Product.findByIdAndUpdate(
+    const updatedProduct = await Products.findByIdAndUpdate(
       req.params.id,
       { id, name, category, price, originalPrice, image, badge, isDeal },
       { new: true }
