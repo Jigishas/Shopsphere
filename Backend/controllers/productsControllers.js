@@ -46,4 +46,21 @@ const postProduct = async (req, res) => {
   }
 };
 
+const putProduct= async (req, res) => {
+  try {
+    const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
+    const updatedProduct = await Product.findByIdAndUpdate(
+      req.params.id,
+      { id, name, category, price, originalPrice, image, badge, isDeal },
+      { new: true }
+    );
+    if (!updatedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json(updatedProduct);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating product', error: error.message });
+  }
+};
+
 module.exports = { getAllProducts, getProductsById, postProduct };
