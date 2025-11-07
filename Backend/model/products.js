@@ -11,4 +11,4 @@ const productSchema = new mongoose.Schema({
     isDeal: { type: Boolean, default: false }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Product', productSchema);
+module.exports = mongoose.model('Products', productSchema);
