@@ -201,24 +201,6 @@ app.use('/api/products', router);
 app.use('/api/products/:id', router);
 
 
-// PUT update product
-// app.put('/api/products/:id', async (req, res) => {
-//   try {
-//     const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
-//     const updatedProduct = await Product.findByIdAndUpdate(
-//       req.params.id,
-//       { id, name, category, price, originalPrice, image, badge, isDeal },
-//       { new: true }
-//     );
-//     if (!updatedProduct) {
-//       return res.status(404).json({ message: 'Product not found' });
-//     }
-//     res.json(updatedProduct);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error updating product', error: error.message });
-//   }
-// });
-
 // DELETE product
 // app.delete('/api/products/:id', async (req, res) => {
 //   try {
