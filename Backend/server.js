@@ -183,18 +183,6 @@ app.post('/api/contact', (req, res) => {
   }, 1000); // 1 second delay to simulate email sending
 });
 
-// Product CRUD routes
-
-// GET all products
-// app.get('/api/products', async (req, res) => {
-//   try {
-//     const products = await Products.find();
-//     console.log(products);
-//     res.json(products);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error fetching products', error: error.message });
-//   }
-// });
 app.get('/api/products', router);
 app.get('/api/products/:id', router);
 app.post('/api/products', router);
