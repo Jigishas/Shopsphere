@@ -190,7 +190,7 @@ function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
           >
-            <h1 className="text-5xl font-bold mb-6 drop-shadow-lg">Summer Collection 2023</h1>
+            <h1 className="text-5xl font-bold mb-6 drop-shadow-lg">Summer Collection 2025</h1>
             <p className="text-xl mb-8 opacity-90">Discover the latest trends in fashion, electronics, and more with exclusive discounts up to 50% off</p>
             <a href="/api/products" className="inline-flex items-center gap-2 bg-accent text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all">
               Shop Now <motion.span animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>→</motion.span>
