@@ -195,10 +195,10 @@ app.post('/api/contact', (req, res) => {
 //     res.status(500).json({ message: 'Error fetching products', error: error.message });
 //   }
 // });
-app.use('/api/products', router);
+app.get('/api/products', router);
 app.use('/api/products/:id', router);
 app.use('/api/products', router);
-app.use('/api/products/:id', router);
+app.delete('/api/products/:id', router);
 
 
 app.listen(PORT, () => {
