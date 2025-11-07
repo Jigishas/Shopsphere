@@ -274,60 +274,88 @@ function AdminDashboard() {
                   >
                     <h3 className="text-lg font-semibold mb-4">Add New Product</h3>
                     <form onSubmit={handleAddProduct} className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <input
-                        type="number"
-                        placeholder="ID"
-                        value={newProduct.id}
-                        onChange={(e) => setNewProduct({...newProduct, id: parseInt(e.target.value)})}
-                        className="p-3 border rounded-lg"
-                        required
-                      />
-                      <input
-                        type="text"
-                        placeholder="Name"
-                        value={newProduct.name}
-                        onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
-                        className="p-3 border rounded-lg"
-                        required
-                      />
-                      <input
-                        type="text"
-                        placeholder="Category"
-                        value={newProduct.category}
-                        onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
-                        className="p-3 border rounded-lg"
-                        required
-                      />
-                      <input
-                        type="number"
-                        placeholder="Price"
-                        value={newProduct.price}
-                        onChange={(e) => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
-                        className="p-3 border rounded-lg"
-                        required
-                      />
-                      <input
-                        type="number"
-                        placeholder="Original Price"
-                        value={newProduct.originalPrice}
-                        onChange={(e) => setNewProduct({...newProduct, originalPrice: parseFloat(e.target.value)})}
-                        className="p-3 border rounded-lg"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Image URL"
-                        value={newProduct.image}
-                        onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
-                        className="p-3 border rounded-lg"
-                        required
-                      />
-                      <input
-                        type="text"
-                        placeholder="Badge"
-                        value={newProduct.badge}
-                        onChange={(e) => setNewProduct({...newProduct, badge: e.target.value})}
-                        className="p-3 border rounded-lg"
-                      />
+                      <div>
+                        <label htmlFor="addProductId" className="block text-sm font-medium text-gray-700 mb-1">ID</label>
+                        <input
+                          id="addProductId"
+                          type="number"
+                          placeholder="ID"
+                          value={newProduct.id}
+                          onChange={(e) => setNewProduct({...newProduct, id: parseInt(e.target.value)})}
+                          className="p-3 border rounded-lg w-full"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="addProductName" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                        <input
+                          id="addProductName"
+                          type="text"
+                          placeholder="Name"
+                          value={newProduct.name}
+                          onChange={(e) => setNewProduct({...newProduct, name: e.target.value})}
+                          className="p-3 border rounded-lg w-full"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="addProductCategory" className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <input
+                          id="addProductCategory"
+                          type="text"
+                          placeholder="Category"
+                          value={newProduct.category}
+                          onChange={(e) => setNewProduct({...newProduct, category: e.target.value})}
+                          className="p-3 border rounded-lg w-full"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="addProductPrice" className="block text-sm font-medium text-gray-700 mb-1">Price</label>
+                        <input
+                          id="addProductPrice"
+                          type="number"
+                          placeholder="Price"
+                          value={newProduct.price}
+                          onChange={(e) => setNewProduct({...newProduct, price: parseFloat(e.target.value)})}
+                          className="p-3 border rounded-lg w-full"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="addProductOriginalPrice" className="block text-sm font-medium text-gray-700 mb-1">Original Price</label>
+                        <input
+                          id="addProductOriginalPrice"
+                          type="number"
+                          placeholder="Original Price"
+                          value={newProduct.originalPrice}
+                          onChange={(e) => setNewProduct({...newProduct, originalPrice: parseFloat(e.target.value)})}
+                          className="p-3 border rounded-lg w-full"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="addProductImage" className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                        <input
+                          id="addProductImage"
+                          type="text"
+                          placeholder="Image URL"
+                          value={newProduct.image}
+                          onChange={(e) => setNewProduct({...newProduct, image: e.target.value})}
+                          className="p-3 border rounded-lg w-full"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="addProductBadge" className="block text-sm font-medium text-gray-700 mb-1">Badge</label>
+                        <input
+                          id="addProductBadge"
+                          type="text"
+                          placeholder="Badge"
+                          value={newProduct.badge}
+                          onChange={(e) => setNewProduct({...newProduct, badge: e.target.value})}
+                          className="p-3 border rounded-lg w-full"
+                        />
+                      </div>
                       <div className="flex items-center gap-2">
                         <input
                           type="checkbox"
