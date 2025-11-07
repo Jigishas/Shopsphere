@@ -3,8 +3,15 @@ import { motion } from 'framer-motion';
 import { User, Mail, Lock, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+interface FormData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 function Signup() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
     password: '',
