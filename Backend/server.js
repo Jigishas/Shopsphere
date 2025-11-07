@@ -197,7 +197,8 @@ app.post('/api/contact', (req, res) => {
 // });
 app.use('/api/products', router);
 app.use('/api/products/:id', router);
-app.use('/api/product', router);
+app.use('/api/products', router);
+app.use('/api/products/:id', router);
 
 // // GET single product by ID
 // app.get('/api/products/:id', async (req, res) => {
@@ -235,35 +236,35 @@ app.use('/api/product', router);
 // });
 
 // PUT update product
-app.put('/api/products/:id', async (req, res) => {
-  try {
-    const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      { id, name, category, price, originalPrice, image, badge, isDeal },
-      { new: true }
-    );
-    if (!updatedProduct) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-    res.json(updatedProduct);
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating product', error: error.message });
-  }
-});
+// app.put('/api/products/:id', async (req, res) => {
+//   try {
+//     const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
+//     const updatedProduct = await Product.findByIdAndUpdate(
+//       req.params.id,
+//       { id, name, category, price, originalPrice, image, badge, isDeal },
+//       { new: true }
+//     );
+//     if (!updatedProduct) {
+//       return res.status(404).json({ message: 'Product not found' });
+//     }
+//     res.json(updatedProduct);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error updating product', error: error.message });
+//   }
+// });
 
 // DELETE product
-app.delete('/api/products/:id', async (req, res) => {
-  try {
-    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
-    if (!deletedProduct) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-    res.json({ message: 'Product deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error deleting product', error: error.message });
-  }
-});
+// app.delete('/api/products/:id', async (req, res) => {
+//   try {
+//     const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+//     if (!deletedProduct) {
+//       return res.status(404).json({ message: 'Product not found' });
+//     }
+//     res.json({ message: 'Product deleted successfully' });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error deleting product', error: error.message });
+//   }
+// });
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
