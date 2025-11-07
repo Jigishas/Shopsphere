@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Search, ShoppingCart, Heart, Trash2, Plus, Minus, X, Facebook, Twitter, Instagram, MapPin, Phone, Mail, User } from 'lucide-react';
+import { ShoppingBag, Search, ShoppingCart, Heart, Trash2, Plus, Minus, X, Facebook, Twitter, Instagram, MapPin, Phone, Mail, User, Edit, Trash } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Product {
@@ -21,6 +21,13 @@ interface CartItem {
   price: number;
   quantity: number;
   image: string;
+}
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  isAdmin: boolean;
 }
 
 function App() {
@@ -53,6 +60,7 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [filter, setFilter] = useState('all');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [user, setUser] = useState<User | null>(null);
 
   // Fetch products from backend
   useEffect(() => {
