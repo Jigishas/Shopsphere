@@ -63,4 +63,4 @@ const putProduct= async (req, res) => {
   }
 };
 
-module.exports = { getAllProducts, getProductsById, postProduct };
+module.exports = { getAllProducts, getProductsById, postProduct, putProduct };
