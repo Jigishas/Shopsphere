@@ -198,7 +198,9 @@ app.post('/api/contact', (req, res) => {
 app.get('/api/products', router);
 app.get('/api/products/:id', router);
 app.post('/api/products', router);
+app.put('/api/products/:id', router);
 app.delete('/api/products/:id', router);
+
 
 
 app.listen(PORT, () => {
