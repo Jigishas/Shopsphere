@@ -25,4 +25,4 @@ const getProductsById = async (req, res) => {
     res.status(500).json({ message: 'Error fetching product', error: error.message });
   }
 };
-module.exports = { getAllProducts };
+module.exports = { getAllProducts, getProductsById };
