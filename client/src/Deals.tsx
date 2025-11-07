@@ -3,69 +3,17 @@ import { motion } from 'framer-motion';
 import { ShoppingBag, Search, ShoppingCart, User, ShoppingCart as CartIcon, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Deal Products
-const dealProducts = [
-  {
-    id: 1,
-    name: "Wireless Bluetooth Headphones",
-    category: "electronics",
-    price: 79.99,
-    originalPrice: 99.99,
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-    badge: "Sale",
-    isDeal: true
-  },
-  {
-    id: 3,
-    name: "Casual Summer Dress",
-    category: "fashion",
-    price: 45.99,
-    originalPrice: 59.99,
-    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80",
-    badge: "Popular",
-    isDeal: true
-  },
-  {
-    id: 5,
-    name: "Running Shoes",
-    category: "sports",
-    price: 89.99,
-    originalPrice: 109.99,
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-    badge: "Hot",
-    isDeal: true
-  },
-  {
-    id: 7,
-    name: "Designer Handbag",
-    category: "fashion",
-    price: 149.99,
-    originalPrice: 199.99,
-    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1035&q=80",
-    badge: "Sale",
-    isDeal: true
-  },
-  {
-    id: 9,
-    name: "4K Ultra HD Smart TV",
-    category: "electronics",
-    price: 599.99,
-    originalPrice: 799.99,
-    image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-    badge: "Sale",
-    isDeal: true
-  },
-  {
-    id: 11,
-    name: "Kitchen Mixer",
-    category: "home",
-    price: 129.99,
-    originalPrice: 159.99,
-    image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-    badge: "Sale",
-    isDeal: true
-  }
-];
+interface Product {
+  _id: string;
+  id: number;
+  name: string;
+  category: string;
+  price: number;
+  originalPrice?: number;
+  image: string;
+  badge?: string;
+  isDeal: boolean;
+}
 
 interface CartItem {
   id: number;
@@ -91,6 +39,21 @@ function Deals() {
 
   const [cart, setCart] = useState<CartItem[]>(loadCartFromStorage);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [dealProducts, setDealProducts] = useState<Product[]>([]);
+
+  // Fetch deal products from API
+  const fetchDealProducts = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/products', {
+        credentials: 'include'
+      });
+      const data = await response.json();
+      const deals = data.filter((product: Product) => product.isDeal);
+      setDealProducts(deals);
+    } catch (error) {
+      console.error('Error fetching deal products:', error);
+    }
+  };
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
@@ -98,13 +61,30 @@ function Deals() {
   }, [cart]);
 
   useEffect(() => {
-    // Set the date we're counting down to (3 days from now)
-    const countDownDate = new Date();
-    countDownDate.setDate(countDownDate.getDate() + 3);
+    fetchDealProducts();
+  }, []);
 
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const distance = countDownDate.getTime() - now;
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      const currentSecond = now.getSeconds();
+
+      // Calculate the next 2-hour interval starting from 00:00
+      const hoursSinceMidnight = currentHour;
+      const intervalsPassed = Math.floor(hoursSinceMidnight / 2);
+      const nextIntervalHour = (intervalsPassed + 1) * 2;
+      const nextIntervalTime = new Date(now);
+      nextIntervalTime.setHours(nextIntervalHour, 0, 0, 0);
+
+      // If next interval is tomorrow, set to 00:00 tomorrow
+      if (nextIntervalHour >= 24) {
+        nextIntervalTime.setDate(nextIntervalTime.getDate() + 1);
+        nextIntervalTime.setHours(0, 0, 0, 0);
+      }
+
+      const distance = nextIntervalTime.getTime() - now.getTime();
 
       if (distance > 0) {
         setTimeLeft({
@@ -115,9 +95,11 @@ function Deals() {
         });
       } else {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        clearInterval(timer);
       }
-    }, 1000);
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
 
     return () => clearInterval(timer);
   }, []);

@@ -246,13 +246,6 @@ function Shop() {
                 <input type="text" placeholder="Search products..." className="pl-4 pr-10 py-2 rounded-full bg-white/20 text-white placeholder-white/70 border-none outline-none w-64 focus:ring-2 focus:ring-accent transition-all" />
                 <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
               </div>
-              <button
-                onClick={handleCreateProduct}
-                className="flex items-center gap-2 bg-accent text-white px-4 py-2 rounded-full hover:bg-accent/80 transition-colors"
-              >
-                <Plus size={18} />
-                Add Product
-              </button>
               <Link to="/signup" className="flex items-center gap-2 bg-accent text-white px-4 py-2 rounded-full hover:bg-accent/80 transition-colors">
                 <User size={18} />
                 Sign Up
