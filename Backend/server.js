@@ -196,6 +196,7 @@ app.post('/api/contact', (req, res) => {
 //   }
 // });
 app.use('/api/products', router);
+app.use('/api/products/:id', router);
 
 // // GET single product by ID
 // app.get('/api/products/:id', async (req, res) => {
