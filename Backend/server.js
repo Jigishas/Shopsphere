@@ -5,7 +5,8 @@ const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
 const Product = require('./model/products');
 const User = require('./model/users');
-//const router = require('./Routers/routers');
+const router = require('./Routers/productRouter');
+
 require('dotenv').config();
 
 
@@ -149,7 +150,7 @@ app.post('/api/contact', (req, res) => {
     const transporter = nodemailer.createTransporter({
       service: 'gmail',
       auth: {
-        user: 'your-email@gmail.com', // Replace with your email
+        user: 'jigishagachuru336@gmail.com', // Replace with your email
         pass: 'your-app-password' // Replace with your app password
       }
     });
@@ -185,27 +186,30 @@ app.post('/api/contact', (req, res) => {
 // Product CRUD routes
 
 // GET all products
-app.get('/api/products', async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching products', error: error.message });
-  }
-});
+// app.get('/api/products', async (req, res) => {
+//   try {
+//     const products = await Products.find();
+//     console.log(products);
+//     res.json(products);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error fetching products', error: error.message });
+//   }
+// });
+app.use('/api/products', router);
 
-// GET single product by ID
-app.get('/api/products/:id', async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-    res.json(product);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching product', error: error.message });
-  }
-});
+// // GET single product by ID
+// app.get('/api/products/:id', async (req, res) => {
+//   try {
+//     const product = await Product.findById(req.params.id);
+    
+//     if (!product) {
+//       return res.status(404).json({ message: 'Product not found' });
+//     }
+//     res.json(product);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error fetching product', error: error.message });
+//   }
+// });
 
 // POST create new product
 app.post('/api/products', async (req, res) => {
