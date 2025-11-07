@@ -196,7 +196,7 @@ app.post('/api/contact', (req, res) => {
 //   }
 // });
 app.get('/api/products', router);
-app.use('/api/products/:id', router);
+app.get('/api/products/:id', router);
 app.use('/api/products', router);
 app.delete('/api/products/:id', router);
 
