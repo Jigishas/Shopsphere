@@ -15,7 +15,7 @@ const getAllProducts = async (req, res) => {
 // GET single product by ID
 const getProductsById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Products.findById(req.params.id);
     
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
@@ -65,7 +65,7 @@ const putProduct= async (req, res) => {
 
 const deleteproduct= async (req, res) => {
   try {
-    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+    const deletedProduct = await Products.findByIdAndDelete(req.params.id);
     if (!deletedProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }

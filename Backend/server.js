@@ -182,12 +182,12 @@ app.post('/api/contact', (req, res) => {
     
   }, 1000); // 1 second delay to simulate email sending
 });
-
-app.get('/api/products', router);
-app.get('/api/products/:id', router);
-app.post('/api/products', router);
-app.put('/api/products/:id', router);
-app.delete('/api/products/:id', router);
+app.use('/', router);
+// app.get('/api/products', router);
+// app.get('/api/products/:id', router);
+// app.post('/api/products', router);
+// app.put('/api/products/:id', router);
+// app.delete('/api/products/:id', router);
 
 
 
