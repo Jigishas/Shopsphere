@@ -15,23 +15,7 @@ const app = express();
 const PORT = 5000;
 
 // Middleware
-app.use(cors({
-  origin: true,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: [
-   'Content-Type',
-   'Authorization',
-   'X-Requested-With',
-   'Accept',
-   'Origin',
-   'Access-Control-Request-Method',
-   'Access-Control-Request-Headers'
-  ],
-  preflightContinue: false,
-  optionsSuccessStatus: 204
-}
-));
+// app.use(cors());
 
 // The cors middleware handles preflight requests automatically
 
@@ -194,12 +178,7 @@ app.get('/api/products-direct', async (req, res) => {
   }
 });
 
-app.use(router);
-// app.get('/api/products', router);
-// app.get('/api/products/:id', router);
-// app.post('/api/products', router);
-// app.put('/api/products/:id', router);
-// app.delete('/api/products/:id', router);
+app.use('/', router);
 
 
 
