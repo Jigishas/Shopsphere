@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const Products = require('../model/products');
 
-
 // GET all products
 const getAllProducts = async (req, res) => {
   try {
