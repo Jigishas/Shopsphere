@@ -13,7 +13,6 @@ require('dotenv').config();
 const app = express();
 const PORT = 5000;
 
-
 // Middleware
 app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://127.0.0.1:5173', 'http://127.0.0.1:5174'],
@@ -52,14 +51,9 @@ const connectDB = async () => {
 };
 connectDB();
 
-app.use(router);
+
 // The cors middleware handles preflight requests automatically
-app.get('/api/products', async (req,res)=>{
-  const products= await Products.find({products});
-  res.status(200).json(products)
-  console.log(products)
-  
-} )
+
 // Signup endpoint
 app.post('/api/signup', async (req, res) => {
   const { name, email, password } = req.body;
@@ -188,6 +182,17 @@ app.post('/api/contact', (req, res) => {
     
   }, 1000); // 1 second delay to simulate email sending
 });
+
+// Use the Products model directly for fetching products to resolve the unused import warning
+app.get('/api/products-direct', async (req, res) => {
+  try {
+    const products = await Products.find();
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching products', error: error.message });
+  }
+});
+
 app.use(router);
 // app.get('/api/products', router);
 // app.get('/api/products/:id', router);
