@@ -67,14 +67,13 @@ function Shop() {
   // Fetch products from API
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/products', {
-        credentials: 'include'
-      });
+      const response = await fetch('http://localhost:5000/api/products');
       const data = await response.json();
       setProducts(data);
       setFilteredProducts(data);
-    } catch (error) {
-      console.error('Error fetching products:', error);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      console.log( err)
     }
   };
 

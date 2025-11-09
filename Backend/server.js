@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const Products = require('./model/products');
 const User = require('./model/users');
 const router = require('./Routers/productRouter');
+const { getAllProducts, getProductsById, postProduct, putProduct, deleteproduct } = require('./controllers/productsControllers');
 
 require('dotenv').config();
 
