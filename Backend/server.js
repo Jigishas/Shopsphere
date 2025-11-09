@@ -3,7 +3,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
-const Product = require('./model/products');
+const Products = require('./model/products');
 const User = require('./model/users');
 const router = require('./Routers/productRouter');
 
@@ -12,6 +12,7 @@ require('dotenv').config();
 
 const app = express();
 const PORT = 5000;
+
 
 // Middleware
 app.use(cors({
@@ -51,9 +52,14 @@ const connectDB = async () => {
 };
 connectDB();
 
-
+app.use(router);
 // The cors middleware handles preflight requests automatically
-
+app.get('/api/products', async (req,res)=>{
+  const products= await Products.find({products});
+  res.status(200).json(products)
+  console.log(products)
+  
+} )
 // Signup endpoint
 app.post('/api/signup', async (req, res) => {
   const { name, email, password } = req.body;
