@@ -45,10 +45,32 @@ exports.postusers=async (req,res)=>{
         res.status(500).json({ message: 'Error creating user', error: error.message });
       }
     };
-exports.putusers= async (req,res) =>{
-    try {
-        if(!req.body.id){
-            res.status(400).json('notfound');
-        }
+exports.postusers = async (req, res) => {
+  const { email, password } = req.body;
+
+  // Basic validation
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
+  }
+
+  try {
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
-}
+
+    // Check password (in a real app, compare hashed passwords)
+    if (user.password !== password) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    res.status(200).json({
+      message: 'Login successful',
+      user: { id: user._id, name: user.name, email: user.email, isAdmin: user.isAdmin }
+    });
+  } catch (error) {
+    console.error('Error logging in:', error);
+    res.status(500).json({ message: 'Error logging in', error: error.message });
+  }
+});
