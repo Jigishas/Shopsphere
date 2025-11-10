@@ -89,48 +89,7 @@ app.post('/api/contact', (req, res) => {
   }
 
 
-  // // Simulate email sending delay
-  // setTimeout(() => {
-  //   // For now, we'll always succeed for testing
-  //   // In production, uncomment the nodemailer code below
-  //   res.status(200).json({ message: 'Message sent successfully' });
 
-    
-  //   // Create transporter (uncomment for production)
-  //   const transporter = nodemailer.createTransporter({
-  //     service: 'gmail',
-  //     auth: {
-  //       user: 'jigishagachuru336@gmail.com', // Replace with your email
-  //       pass: 'your-app-password' // Replace with your app password
-  //     }
-  //   });
-
-  //   // Email options
-  //   const mailOptions = {
-  //     from: email,
-  //     to: 'Jigishaflamings336@gmail.com',
-  //     subject: `Contact Form: ${subject}`,
-  //     html: `
-  //       <h2>New Contact Form Submission</h2>
-  //       <p><strong>Name:</strong> ${name}</p>
-  //       <p><strong>Email:</strong> ${email}</p>
-  //       <p><strong>Subject:</strong> ${subject}</p>
-  //       <p><strong>Message:</strong></p>
-  //       <p>${message.replace(/\n/g, '<br>')}</p>
-  //     `
-  //   };
-
-    // Send email
-  //   transporter.sendMail(mailOptions, (error, info) => {
-  //     if (error) {
-  //       console.error('Error sending email:', error);
-  //       return res.status(500).json({ message: 'Failed to send message' });
-  //     }
-  //     console.log('Email sent:', info.response);
-  //     res.status(200).json({ message: 'Message sent successfully' });
-  //   });
-    
-  // }, 1000); // 1 second delay to simulate email sending
 });
 
 // Use the Products model directly for fetching products to resolve the unused import warning
