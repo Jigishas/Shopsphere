@@ -15,7 +15,6 @@ const PORT = 5000;
 // Middleware
 // app.use(cors());
 
-// The cors middleware handles preflight requests automatically
 
 app.use(bodyParser.json());
 app.use(express.json());
