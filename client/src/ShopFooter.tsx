@@ -63,7 +63,7 @@ function ShopFooter() {
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={16} />
-                +1 (555) 123-4567
+                +254743121169
               </li>
               <li className="flex items-center gap-2">
                 <Mail size={16} />
