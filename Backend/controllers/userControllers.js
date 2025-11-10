@@ -1,10 +1,10 @@
 const express=require('express');
 const mongoose=require('mongoose');
-const users=require('../model/users');
+const Users=require('../model/users');
 
 exports.getusers = async (req,res)=>{
     try{
-    const users=await users.find();
+    const users=await Users.find();
     res.status(200).json('successful');
     console.log(users)
 
