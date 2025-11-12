@@ -33,7 +33,7 @@ const connectDB = async () => {
 };
 connectDB();
 
-
+app.use('/', router);
 // The cors middleware handles preflight requests automatically
 
 
@@ -100,7 +100,7 @@ app.get('/api/products-direct', async (req, res) => {
   }
 });
 
-app.use('/', router);
+
 
 
 
