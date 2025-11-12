@@ -5,7 +5,7 @@ const Products = require('../model/products');
 // GET all products
 const getAllProducts = async (req, res) => {
   try {
-    const products =  await  users.Products.find();
+    const products =  await  Users.Products.find();
     console.log(products);
     res.status(200).json(products);
   } catch (error) {
@@ -15,7 +15,7 @@ const getAllProducts = async (req, res) => {
 // GET single product by ID
 const getProductsById = async (req, res) => {
   try {
-    const product = await Products.findById(req.params.id);
+    const product = await Users.Products.findById(req.params.id);
     
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
@@ -49,7 +49,7 @@ const postProduct = async (req, res) => {
 const putProduct= async (req, res) => {
   try {
     const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
-    const updatedProduct = await Products.findByIdAndUpdate(
+    const updatedProduct = await Users.Products.findByIdAndUpdate(
       req.params.id,
       { id, name, category, price, originalPrice, image, badge, isDeal },
       { new: true }
@@ -65,7 +65,7 @@ const putProduct= async (req, res) => {
 
 const deleteproduct= async (req, res) => {
   try {
-    const deletedProduct = await Products.findByIdAndDelete(req.params.id);
+    const deletedProduct = await Users.Products.findByIdAndDelete(req.params.id);
     if (!deletedProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }
