@@ -46,7 +46,7 @@ const postProduct = async (req, res) => {
   }
 };
 
-const putProduct= async (req, res) => {
+exports.putProduct= async (req, res) => {
   try {
     const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
     const updatedProduct = await Users.Products.findByIdAndUpdate(
