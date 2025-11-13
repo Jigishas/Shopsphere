@@ -13,7 +13,7 @@ const getAllProducts = async (req, res) => {
   } 
 };
 // GET single product by ID
-const getProductsById = async (req, res) => {
+exports.getProductsById = async (req, res) => {
   try {
     const product = await Users.Products.findById(req.params.id);
     
