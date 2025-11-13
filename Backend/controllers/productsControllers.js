@@ -63,7 +63,7 @@ const putProduct= async (req, res) => {
   }
 };
 
-const deleteproduct= async (req, res) => {
+exports.deleteproduct= async (req, res) => {
   try {
     const deletedProduct = await Users.Products.findByIdAndDelete(req.params.id);
     if (!deletedProduct) {
