@@ -90,14 +90,14 @@ app.post('/api/contact', (req, res) => {
 });
 
 // Use the Products model directly for fetching products to resolve the unused import warning
-app.get('/api/products-direct', async (req, res) => {
-  try {
-    const products = await Products.find();
-    res.status(200).json(products);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching products', error: error.message });
-  }
-});
+// app.get('/api/products-direct', async (req, res) => {
+//   try {
+//     const products = await Products.find();
+//     res.status(200).json(products);
+//   } catch (error) {
+//     res.status(500).json({ message: 'Error fetching products', error: error.message });
+//   }
+// });
 
 
 
