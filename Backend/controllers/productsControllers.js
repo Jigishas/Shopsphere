@@ -26,7 +26,7 @@ const getProductsById = async (req, res) => {
   }
 };
 
-const postProduct = async (req, res) => {
+exports.postProduct = async (req, res) => {
   try {
     const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
     const newProduct = new Products({
