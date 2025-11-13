@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Products = require('../model/products');
 
 // GET all products
-const getAllProducts = async (req, res) => {
+exports.getAllProducts = async (req, res) => {
   try {
     const products =  await  Users.Products.find();
     console.log(products);
