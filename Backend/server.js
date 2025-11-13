@@ -35,15 +35,6 @@ connectDB();
 
 app.use('/', router);
 // The cors middleware handles preflight requests automatically
-app.get('/api/products', async (req, res) => {
-  try {
-    const products =  await Products.find();
-    console.log(products);
-    res.status(200).json(products);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching products', error: error.message });
-  } 
-});
 
 // Login endpoint
 app.post('/api/login', async (req, res) => {
