@@ -1,6 +1,6 @@
 const express = require('express');
-const cors = require('cors');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const Products = require('./model/products');
 const User = require('./model/users');
@@ -11,8 +11,6 @@ require('dotenv').config();
 
 const app = express();
 const PORT = 5000;
-
-const cors = require('cors');
 
 // Middleware
 app.use(cors({
@@ -91,7 +89,15 @@ app.post('/api/contact', (req, res) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-
+  // In a real application you'd persist this to a database or send an email.
+  // For now, return a success response so the frontend receives confirmation.
+  try {
+    // TODO: implement saving or emailing the contact message (e.g., nodemailer)
+    return res.status(200).json({ message: 'Contact message received' });
+  } catch (error) {
+    console.error('Error handling contact form:', error);
+    return res.status(500).json({ message: 'Error processing contact form', error: error.message });
+  }
 
 });
 

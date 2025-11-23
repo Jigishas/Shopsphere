@@ -2,20 +2,19 @@ const express = require('express');
 const mongoose = require('mongoose');
 const Products = require('../model/products');
 
-// GET all products
 exports.getAllProducts = async (req, res) => {
   try {
-    const products =  await  Users.Products.find();
+    const products =  await Products.find();
     console.log(products);
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching products', error: error.message });
   } 
 };
-// GET single product by ID
+
 exports.getProductsById = async (req, res) => {
   try {
-    const product = await Users.Products.findById(req.params.id);
+    const product = await Products.findById(req.params.id);
     
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
@@ -49,7 +48,7 @@ exports.postProduct = async (req, res) => {
 exports.putProduct= async (req, res) => {
   try {
     const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
-    const updatedProduct = await Users.Products.findByIdAndUpdate(
+    const updatedProduct = await Products.findByIdAndUpdate(
       req.params.id,
       { id, name, category, price, originalPrice, image, badge, isDeal },
       { new: true }
@@ -65,7 +64,7 @@ exports.putProduct= async (req, res) => {
 
 exports.deleteproduct= async (req, res) => {
   try {
-    const deletedProduct = await Users.Products.findByIdAndDelete(req.params.id);
+    const deletedProduct = await Products.findByIdAndDelete(req.params.id);
     if (!deletedProduct) {
       return res.status(404).json({ message: 'Product not found' });
     }
