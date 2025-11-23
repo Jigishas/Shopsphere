@@ -95,8 +95,9 @@ function Shop() {
   }, [filter, products]);
 
   const addToCart = (productId: number) => {
-    const product = products.find(p => p.id === productId);
+    const product = products.find(p => p._id === productId);
     if (!product) return;
+
 
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.id === productId);
@@ -294,7 +295,7 @@ function Shop() {
           >
             {filteredProducts.map((product, index) => (
               <motion.div
-                key={product.id}
+                key={product._id}
                 className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -321,7 +322,7 @@ function Shop() {
                   <div className="flex justify-between items-center">
                     <motion.button
                       className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
-                      onClick={() => addToCart(product.id)}
+                      onClick={() => addToCart(product._id)}
                       whileTap={{ scale: 0.95 }}
                     >
                       <ShoppingCart size={16} />
