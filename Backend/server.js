@@ -37,7 +37,7 @@ app.use('/', router);
 
 // Middleware
 app.use(cors({
-  origin: '[https://shopsphere-ye71.vercel.app/]',
+  origin: 'https://shopsphere-ye71.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
