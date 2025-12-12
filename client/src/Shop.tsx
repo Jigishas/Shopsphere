@@ -67,7 +67,7 @@ function Shop() {
   // Fetch products from API
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/products');
+      const response = await fetch('https://shopsphere-p12m.onrender.com/api/products');
       const data = await response.json();
       setProducts(data);
       setFilteredProducts(data);
@@ -177,7 +177,7 @@ function Shop() {
   const handleDeleteProduct = async (productId: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        const response = await fetch(`http://localhost:5000/api/products/${productId}`, {
+        const response = await fetch(`https://shopsphere-p12m.onrender.com/api/products/${productId}`, {
           method: 'DELETE',
           credentials: 'include'
         });
@@ -196,8 +196,8 @@ function Shop() {
     e.preventDefault();
     try {
       const url = editingProduct
-        ? `http://localhost:5000/api/products/${editingProduct._id}`
-        : 'http://localhost:5000/api/products';
+        ? `https://shopsphere-p12m.onrender.com/api/products/${editingProduct._id}`
+        : 'https://shopsphere-p12m.onrender.com/api/products';
       const method = editingProduct ? 'PUT' : 'POST';
       const response = await fetch(url, {
         method,

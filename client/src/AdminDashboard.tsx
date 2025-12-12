@@ -48,7 +48,7 @@ function AdminDashboard() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/products');
+      const response = await fetch('https://shopsphere-p12m.onrender.com/api/products');
       const data = await response.json();
       setProducts(data);
     } catch (error) {
@@ -58,7 +58,7 @@ function AdminDashboard() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/users');
+      const response = await fetch('https://shopsphere-p12m.onrender.com/api/users');
       const data = await response.json();
       setUsers(data);
       setLoading(false);
@@ -71,7 +71,7 @@ function AdminDashboard() {
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/api/products', {
+      const response = await fetch('https://shopsphere-p12m.onrender.com/api/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ function AdminDashboard() {
     if (!editingProduct) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${editingProduct._id}`, {
+      const response = await fetch(`https://shopsphere-p12m.onrender.com/api/products/${editingProduct._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ function AdminDashboard() {
     if (!confirm('Are you sure you want to delete this product?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${productId}`, {
+      const response = await fetch(`https://shopsphere-p12m.onrender.com/api/products/${productId}`, {
         method: 'DELETE',
       });
 
