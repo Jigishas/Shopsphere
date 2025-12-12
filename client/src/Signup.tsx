@@ -33,7 +33,7 @@ function Signup() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/signup', {
+      const response = await fetch('https://shopsphere-p12m.onrender.com/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
