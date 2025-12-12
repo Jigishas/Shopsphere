@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const Products = require('./model/products');
-const User = require('./model/users');
+const userRouter = require('./Routers/UsersRouter');
 const router = require('./Routers/productRouter');
 
 require('dotenv').config();
@@ -65,7 +65,40 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', mongoState });
 });
 // The cors middleware handles preflight requests automatically
+app.use('/api/users', userRouter);
 
+app.post('/api/signup', async (req, res) => {
+  const { name, email, password, confirmPassword } = req.body;
+  // Basic validation
+  if (!name || !email || !password || !confirmPassword) {
+    return res.status(400).json({ message: 'All fields are required' });
+  } 
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: 'Passwords do not match' });
+  }
+
+  try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User already exists' });
+    } 
+    // Create new user
+    const newUser = new User({
+      name,
+      email,
+      password // In a real app, hash the password
+    });
+    const savedUser = await newUser.save();
+    res.status(201).json({
+      message: 'User created successfully',
+      user: { id: savedUser._id, name: savedUser.name, email: savedUser.email }
+    });
+  } catch (error) {
+    console.error('Error saving user:', error);
+    res.status(500).json({ message: 'Error creating user', error: error.message });
+  }
+});
 // Login endpoint
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
