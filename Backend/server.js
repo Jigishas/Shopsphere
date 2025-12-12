@@ -8,20 +8,41 @@ const router = require('./Routers/productRouter');
 
 require('dotenv').config();
 
+// const app = express();
+// const PORT = 5000;
 
+
+// app.use(bodyParser.json());
+// app.use(express.json());
+
+// app.use(cors());
 const app = express();
 const PORT = 5000;
 
-// Middleware
-app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+app.get('/', (req, res) => {
+  return res.status(200).send("Backend is running...");
+});
 
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(cors());
+
+app.get('/', (req, res) => {
+  res.send('Backend is running...');
+});
+
+
+app.use('/', router);
+
+
+// Middleware
+// app.use(cors({
+//   origin: '[http://localhost:5173],[*]',
+//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization'],
+//   credentials: true
+// }));
+
 // Connect to MongoDB
 const connectDB = async () => {
   try {
@@ -32,12 +53,17 @@ const connectDB = async () => {
     console.log('MongoDB connected successfully');
   } catch (error) {
     console.error('MongoDB connection error:', error);
-    process.exit(1); // Exit process with failure
+    // Do not exit here so the server can stay up for debugging.
+    // If you prefer to stop the process on DB failure, re-enable process.exit(1).
   }
 };
 connectDB();
-
-app.use('/', router);
+// Remove any catch-all middleware that would short-circuit route handling.
+// Add a simple health endpoint for diagnostics.
+app.get('/api/health', (req, res) => {
+  const mongoState = mongoose.connection.readyState; // 0 = disconnected, 1 = connected
+  res.status(200).json({ status: 'ok', mongoState });
+});
 // The cors middleware handles preflight requests automatically
 
 // Login endpoint
@@ -102,14 +128,14 @@ app.post('/api/contact', (req, res) => {
 });
 
 // Use the Products model directly for fetching products to resolve the unused import warning
-// app.get('/api/products-direct', async (req, res) => {
-//   try {
-//     const products = await Products.find();
-//     res.status(200).json(products);
-//   } catch (error) {
-//     res.status(500).json({ message: 'Error fetching products', error: error.message });
-//   }
-// });
+app.get('/api/products-direct', async (req, res) => {
+   try {
+    const products = await Products.find();
+    res.status(200).json(products);
+ } catch (error) {
+    res.status(500).json({ message: 'Error fetching products', error: error.message });
+   }
+ });
 
 
 
