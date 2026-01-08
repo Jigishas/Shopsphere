@@ -69,7 +69,7 @@ app.use('/api/users', userRouter);
 app.post('/api/signup', async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
   // Basic validation
-  if (!name || !email || !password || !confirmPassword) {
+  if (!name || !email || !password ) {
     return res.status(400).json({ message: 'All fields are required' });
   } 
   if (password !== confirmPassword) {
@@ -129,7 +129,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 // Get all users (for testing purposes)
-app.get('/users', async (req, res) => {
+app.get('api/users', async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
