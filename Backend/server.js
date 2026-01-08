@@ -66,7 +66,7 @@ app.get('/api/health', (req, res) => {
 // The cors middleware handles preflight requests automatically
 app.use('/api/users', userRouter);
 
-app.post('/signup', async (req, res) => {
+app.post('/api/signup', async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
   // Basic validation
   if (!name || !email || !password || !confirmPassword) {
@@ -99,7 +99,7 @@ app.post('/signup', async (req, res) => {
   }
 });
 // Login endpoint
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
 
   // Basic validation
@@ -139,7 +139,7 @@ app.get('/users', async (req, res) => {
 });
 
 // Contact form endpoint
-app.post('/contact', (req, res) => {
+app.post('/api/contact', (req, res) => {
   const { name, email, subject, message } = req.body;
 
   // Basic validation
@@ -160,7 +160,7 @@ app.post('/contact', (req, res) => {
 });
 
 // Use the Products model directly for fetching products to resolve the unused import warning
-app.get('/products-direct', async (req, res) => {
+app.get('/api/products-direct', async (req, res) => {
    try {
     const products = await Products.find();
     res.status(200).json(products);
