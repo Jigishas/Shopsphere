@@ -59,7 +59,6 @@ const connectDB = async () => {
 };
 connectDB();
 // Remove any catch-all middleware that would short-circuit route handling.
-// Add a simple health endpoint for diagnostics.
 app.get('/api/health', (req, res) => {
   const mongoState = mongoose.connection.readyState; // 0 = disconnected, 1 = connected
   res.status(200).json({ status: 'ok', mongoState });
