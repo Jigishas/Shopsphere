@@ -40,7 +40,7 @@ app.use(cors({
   origin: 'https://shopsphere-ye71.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  credentials: true,
 }));
 
 // Connect to MongoDB
@@ -69,7 +69,7 @@ app.use('/api/users', userRouter);
 app.post('/api/signup', async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
   // Basic validation
-  if (!name || !email || !password ) {
+  if (!name || !email || !password || !confirmPassword) {
     return res.status(400).json({ message: 'All fields are required' });
   } 
   if (password !== confirmPassword) {
