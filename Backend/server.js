@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const Products = require('./model/products');
+const User = require('./model/users');
 const userRouter = require('./Routers/UsersRouter');
 const router = require('./Routers/productRouter');
 
@@ -25,23 +26,32 @@ app.get('/', (req, res) => {
 
 app.use(bodyParser.json());
 app.use(express.json());
-app.use(cors());
+
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'https://shopsphere-ye71.vercel.app',
+  'https://shopsphere-p12m.onrender.com',
+  'http://localhost:5173'
+].filter(Boolean);
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
+    }
+    return callback(new Error('CORS policy: This origin is not allowed'));
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}));
 
 app.get('/', (req, res) => {
   res.send('Backend is running...');
 });
 
-
 app.use('/', router);
-
-
-// Middleware
-app.use(cors({
-  origin: 'https://shopsphere-ye71.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}));
 
 // Connect to MongoDB
 const connectDB = async () => {

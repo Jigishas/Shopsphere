@@ -5,7 +5,14 @@ const urlsToCache = [
   '/src/App.tsx',
   '/src/index.css',
   '/vite.svg',
-  '/manifest.json'
+  '/manifest.json',
+  '/src/Signup.tsx',
+  '/src/Login.tsx',
+  '/src/Shop.tsx',
+  '/src/Categories.tsx',
+  '/src/Deals.tsx',
+  '/src/About.tsx',
+  '/src/Contact.tsx'
 ];
 
 // Install event - cache resources
