@@ -62,7 +62,8 @@ function App() {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Fetch products from backend
   useEffect(() => {
@@ -93,6 +94,22 @@ function App() {
       setFilteredProducts(products.filter(product => product.category === filter));
     }
   }, [filter, products]);
+
+  // PWA install prompt
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      console.log('beforeinstallprompt event fired');
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallPrompt(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
 
   const addToCart = (productId: number) => {
     const product = products.find(p => p.id === productId);
@@ -165,28 +182,52 @@ function App() {
       <header className="bg-gradient-to-r from-primary to-secondary text-white py-4 sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3 text-2xl font-bold cursor-pointer hover:scale-105 transition-transform">
-              <ShoppingBag className="text-accent" />
-              <span>ShopSphere</span>
-            </div>
+<div className="flex items-center gap-3 text-2xl font-bold cursor-pointer hover:scale-105 transition-transform">
+  <button className="md:hidden mr-3" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+  </button>
+  <ShoppingBag className="text-accent" />
+  <span>ShopSphere</span>
+</div>
             <nav>
-              <ul className="flex gap-6">
+<ul className="hidden md:flex gap-6">
                 <li><Link to="/" className="hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all hover:after:w-full">Home</Link></li>
                 <li><Link to="/api/products" className="hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all hover:after:w-full">Shop</Link></li>
                 <li><Link to="/categories" className="hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all hover:after:w-full">Categories</Link></li>
                 <li><Link to="/deals" className="hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all hover:after:w-full">Deals</Link></li>
                 <li><Link to="/about" className="hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all hover:after:w-full">About</Link></li>
               </ul>
-            </nav>
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <input type="text" placeholder="Search products..." className="pl-4 pr-10 py-2 rounded-full bg-white/20 text-white placeholder-white/70 border-none outline-none w-64 focus:ring-2 focus:ring-accent transition-all" />
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
-              </div>
-              <Link to="/signup" className="flex items-center gap-2 bg-accent text-white px-4 py-2 rounded-full hover:bg-accent/80 transition-colors">
-                <User size={18} />
-                Sign Up
-              </Link>
+</nav>
+<div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} absolute top-full left-0 right-0 bg-primary text-white py-4 z-50`}>
+  <div className="container mx-auto px-4">
+    <div className="flex flex-col gap-4">
+      <Link to="/" className="hover:text-accent transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
+      <Link to="/api/products" className="hover:text-accent transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Shop</Link>
+      <Link to="/categories" className="hover:text-accent transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Categories</Link>
+      <Link to="/deals" className="hover:text-accent transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Deals</Link>
+      <Link to="/about" className="hover:text-accent transition-colors" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
+      <div className="relative">
+        <input type="text" placeholder="Search products..." className="pl-4 pr-10 py-2 rounded-full bg-white/20 text-white placeholder-white/70 border-none outline-none w-full focus:ring-2 focus:ring-accent transition-all" />
+        <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
+      </div>
+      <Link to="/signup" className="flex items-center gap-2 bg-accent text-white px-4 py-2 rounded-full hover:bg-accent/80 transition-colors" onClick={() => setIsMobileMenuOpen(false)}>
+        <User size={18} />
+        Sign Up
+      </Link>
+    </div>
+  </div>
+</div>
+<div className="flex items-center gap-4">
+<div className="relative hidden md:block">
+  <input type="text" placeholder="Search products..." className="pl-4 pr-10 py-2 rounded-full bg-white/20 text-white placeholder-white/70 border-none outline-none w-64 focus:ring-2 focus:ring-accent transition-all" />
+  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
+</div>
+<Link to="/signup" className="hidden md:flex items-center gap-2 bg-accent text-white px-4 py-2 rounded-full hover:bg-accent/80 transition-colors">
+  <User size={18} />
+  Sign Up
+</Link>
               {showInstallPrompt && (
                 <button
                   onClick={handleInstallClick}
@@ -216,9 +257,9 @@ function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
           >
-            <h1 className="text-5xl font-bold mb-6 drop-shadow-lg">Summer Collection 2026</h1>
-            <p className="text-xl mb-8 opacity-90">Discover the latest trends in fashion, electronics, and more with exclusive discounts up to 50% off</p>
-            <a href="/api/products" className="inline-flex items-center gap-2 bg-accent text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-lg hover:scale-105 transition-all">
+<h1 className="text-3xl md:text-5xl font-bold mb-6 drop-shadow-lg">Summer Collection 2026</h1>
+<p className="text-lg md:text-xl mb-8 opacity-90">Discover the latest trends in fashion, electronics, and more with exclusive discounts up to 50% off</p>
+<a href="/api/products" className="inline-flex items-center gap-2 bg-accent text-white px-6 py-3 md:px-8 md:py-4 rounded-full font-semibold text-base md:text-lg hover:shadow-lg hover:scale-105 transition-all">
               Shop Now <motion.span animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>→</motion.span>
             </a>
           </motion.div>
@@ -305,10 +346,10 @@ function App() {
       </section>
 
       {/* Cart Sidebar */}
-      <motion.div
-        className={`fixed top-0 right-0 w-96 h-full bg-white shadow-2xl z-50 overflow-y-auto ${
-          isCartOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+<motion.div
+  className={`fixed top-0 right-0 w-full md:w-96 h-full bg-white shadow-2xl z-50 overflow-y-auto ${
+    isCartOpen ? 'translate-x-0' : 'translate-x-full'
+  }`}
         initial={false}
         animate={{ x: isCartOpen ? 0 : 400 }}
         transition={{ type: 'tween' }}
