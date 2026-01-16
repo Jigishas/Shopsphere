@@ -1,5 +1,0 @@
-- [x] Add PWA install prompt state and event listeners to App.tsx
-- [x] Add install button to header
-- [x] Handle install prompt user interaction
-- [ ] Test PWA installation
-- [ ] Verify service worker functionality
