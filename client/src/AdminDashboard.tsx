@@ -160,6 +160,7 @@ function AdminDashboard() {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold text-secondary">Admin Dashboard</h1>
             <button
+              type="button"
               onClick={handleLogout}
               className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
             >
@@ -229,6 +230,7 @@ function AdminDashboard() {
           <div className="border-b">
             <nav className="flex">
               <button
+                type="button"
                 onClick={() => setActiveTab('products')}
                 className={`px-6 py-4 font-medium ${
                   activeTab === 'products'
@@ -239,6 +241,7 @@ function AdminDashboard() {
                 Products
               </button>
               <button
+                type="button"
                 onClick={() => setActiveTab('users')}
                 className={`px-6 py-4 font-medium ${
                   activeTab === 'users'
@@ -257,6 +260,7 @@ function AdminDashboard() {
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-semibold text-secondary">Product Management</h2>
                   <button
+                    type="button"
                     onClick={() => setShowAddProduct(true)}
                     className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
                   >
@@ -529,6 +533,7 @@ function AdminDashboard() {
                           <td className="py-3 px-4">
                             <div className="flex gap-2">
                               <button
+                                type="button"
                                 onClick={() => setEditingProduct(product)}
                                 className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
                                 aria-label="Edit product"
@@ -536,6 +541,7 @@ function AdminDashboard() {
                                 <Edit size={16} />
                               </button>
                               <button
+                                type="button"
                                 onClick={() => handleDeleteProduct(product._id)}
                                 className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
                                 aria-label="Delete product"

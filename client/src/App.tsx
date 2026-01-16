@@ -183,7 +183,13 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
 <div className="flex items-center gap-3 text-2xl font-bold cursor-pointer hover:scale-105 transition-transform">
-  <button className="md:hidden mr-3" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+  <button
+    type="button"
+    className="md:hidden mr-3"
+    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+    aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+    aria-expanded={isMobileMenuOpen ? 'true' : 'false'}
+  >
     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
     </svg>
@@ -230,6 +236,7 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 </Link>
               {showInstallPrompt && (
                 <button
+                  type="button"
                   onClick={handleInstallClick}
                   className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition-colors"
                   aria-label="Install app"
@@ -238,10 +245,16 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
                   Install
                 </button>
               )}
-              <div className="relative cursor-pointer hover:scale-110 transition-transform" onClick={() => setIsCartOpen(!isCartOpen)}>
+              <button
+                type="button"
+                className="relative cursor-pointer hover:scale-110 transition-transform"
+                onClick={() => setIsCartOpen(!isCartOpen)}
+                aria-label={isCartOpen ? 'Close cart' : 'Open cart'}
+                aria-expanded={isCartOpen ? 'true' : 'false'}
+              >
                 <ShoppingCart size={24} />
                 <span className="absolute -top-2 -right-2 bg-accent text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">{totalItems}</span>
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -282,6 +295,7 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
           <div className="flex justify-center gap-4 mb-12 flex-wrap">
             {['all', 'electronics', 'fashion', 'home', 'sports'].map((category) => (
               <button
+                type="button"
                 key={category}
                 onClick={() => setFilter(category)}
                 className={`px-6 py-3 rounded-full font-semibold transition-all ${
@@ -327,6 +341,7 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
                   </div>
                   <div className="flex justify-between items-center">
                     <motion.button
+                      type="button"
                       className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
                       onClick={() => addToCart(product.id)}
                       whileTap={{ scale: 0.95 }}
@@ -334,7 +349,7 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
                       <ShoppingCart size={16} />
                       Add to Cart
                     </motion.button>
-                    <button className="p-2 border-2 border-gray-300 rounded-full hover:border-accent hover:text-accent transition-colors" aria-label="Add to wishlist">
+                    <button type="button" className="p-2 border-2 border-gray-300 rounded-full hover:border-accent hover:text-accent transition-colors" aria-label="Add to wishlist">
                       <Heart size={20} />
                     </button>
                   </div>
@@ -358,6 +373,7 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
           <div className="flex justify-between items-center mb-6 pb-4 border-b">
             <h2 className="text-2xl font-bold text-secondary">Your Cart</h2>
             <button
+              type="button"
               onClick={() => setIsCartOpen(false)}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label="Close cart"
@@ -382,6 +398,7 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
                       <p className="text-primary font-semibold mb-3">${item.price.toFixed(2)}</p>
                       <div className="flex items-center gap-3">
                         <button
+                          type="button"
                           onClick={() => decreaseQuantity(item.id)}
                           className="p-1 border rounded-full hover:bg-gray-100"
                           aria-label="Decrease quantity"
@@ -390,6 +407,7 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
                         </button>
                         <span className="font-semibold w-8 text-center">{item.quantity}</span>
                         <button
+                          type="button"
                           onClick={() => increaseQuantity(item.id)}
                           className="p-1 border rounded-full hover:bg-gray-100"
                           aria-label="Increase quantity"
@@ -397,6 +415,7 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
                           <Plus size={16} />
                         </button>
                         <button
+                          type="button"
                           onClick={() => removeFromCart(item.id)}
                           className="p-1 text-accent hover:bg-red-50 rounded-full ml-auto"
                           aria-label="Remove item"
@@ -439,13 +458,13 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
                 Your one-stop destination for all your shopping needs. We offer quality products at affordable prices with excellent customer service.
               </p>
               <div className="flex gap-4">
-                <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-accent transition-colors">
+                <a href="#" aria-label="Facebook" className="p-2 bg-white/10 rounded-full hover:bg-accent transition-colors">
                   <Facebook size={20} />
                 </a>
-                <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-accent transition-colors">
+                <a href="#" aria-label="Twitter" className="p-2 bg-white/10 rounded-full hover:bg-accent transition-colors">
                   <Twitter size={20} />
                 </a>
-                <a href="#" className="p-2 bg-white/10 rounded-full hover:bg-accent transition-colors">
+                <a href="#" aria-label="Instagram" className="p-2 bg-white/10 rounded-full hover:bg-accent transition-colors">
                   <Instagram size={20} />
                 </a>
               </div>

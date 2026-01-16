@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Heart, Search, ShoppingBag, User, Plus, Edit, Trash2 } from 'lucide-react';
+import { ShoppingCart, Heart, Search, ShoppingBag, User, Plus, Minus, X, Edit, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ShopFooter from './ShopFooter';
 
@@ -276,6 +276,7 @@ function Shop() {
           <div className="flex justify-center gap-4 mb-12 flex-wrap">
             {['all', 'electronics', 'fashion', 'home', 'sports'].map((category) => (
               <button
+                type="button"
                 key={category}
                 onClick={() => setFilter(category)}
                 className={`px-6 py-3 rounded-full font-semibold transition-all ${
@@ -321,6 +322,7 @@ function Shop() {
                   </div>
                   <div className="flex justify-between items-center">
                     <motion.button
+                      type="button"
                       className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
                       onClick={() => addToCart(product._id)}
                       whileTap={{ scale: 0.95 }}
@@ -328,7 +330,7 @@ function Shop() {
                       <ShoppingCart size={16} />
                       Add to Cart
                     </motion.button>
-                    <button className="p-2 border-2 border-gray-300 rounded-full hover:border-accent hover:text-accent transition-colors" aria-label="Add to wishlist">
+                    <button type="button" className="p-2 border-2 border-gray-300 rounded-full hover:border-accent hover:text-accent transition-colors" aria-label="Add to wishlist">
                       <Heart size={20} />
                     </button>
                   </div>
@@ -352,6 +354,7 @@ function Shop() {
           <div className="flex justify-between items-center mb-6 pb-4 border-b">
             <h2 className="text-2xl font-bold text-secondary">Your Cart</h2>
             <button
+              type="button"
               onClick={() => setIsCartOpen(false)}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label="Close cart"
@@ -360,7 +363,7 @@ function Shop() {
                 animate={{ rotate: isCartOpen ? 0 : 180 }}
                 transition={{ duration: 0.3 }}
               >
-                ×
+                <X size={20} />
               </motion.div>
             </button>
           </div>
@@ -381,26 +384,29 @@ function Shop() {
                       <p className="text-primary font-semibold mb-3">${item.price.toFixed(2)}</p>
                       <div className="flex items-center gap-3">
                         <button
+                          type="button"
                           onClick={() => decreaseQuantity(item.id)}
                           className="p-1 border rounded-full hover:bg-gray-100"
                           aria-label="Decrease quantity"
                         >
-                          −
+                          <Minus size={16} />
                         </button>
                         <span className="font-semibold w-8 text-center">{item.quantity}</span>
                         <button
+                          type="button"
                           onClick={() => increaseQuantity(item.id)}
                           className="p-1 border rounded-full hover:bg-gray-100"
                           aria-label="Increase quantity"
                         >
-                          +
+                          <Plus size={16} />
                         </button>
                         <button
+                          type="button"
                           onClick={() => removeFromCart(item.id)}
                           className="p-1 text-accent hover:bg-red-50 rounded-full ml-auto"
                           aria-label="Remove item"
                         >
-                          ×
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </div>

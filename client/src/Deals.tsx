@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Search, ShoppingCart, User, ShoppingCart as CartIcon, Heart } from 'lucide-react';
+import { ShoppingBag, Search, ShoppingCart, User, ShoppingCart as CartIcon, Heart, Minus, Plus, Trash2, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Product {
@@ -44,7 +44,7 @@ function Deals() {
   // Fetch deal products from API
   const fetchDealProducts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/products', {
+      const response = await fetch('https://shopsphere-p12m.onrender.com/api/products', {
         credentials: 'include'
       });
       const data = await response.json();
@@ -185,10 +185,16 @@ function Deals() {
                 <User size={18} />
                 Sign Up
               </Link>
-              <div className="relative cursor-pointer hover:scale-110 transition-transform" onClick={() => setIsCartOpen(!isCartOpen)}>
+              <button
+                type="button"
+                className="relative cursor-pointer hover:scale-110 transition-transform"
+                onClick={() => setIsCartOpen(!isCartOpen)}
+                aria-label={isCartOpen ? 'Close cart' : 'Open cart'}
+                aria-expanded={isCartOpen}
+              >
                 <ShoppingCart size={24} />
                 <span className="absolute -top-2 -right-2 bg-accent text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">{totalItems}</span>
-              </div>
+              </button>
             </div>
           </div>
         </div>
@@ -296,6 +302,7 @@ function Deals() {
                   </div>
                   <div className="flex justify-between items-center">
                     <motion.button
+                      type="button"
                       className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
                       onClick={() => addToCart(product.id)}
                       whileTap={{ scale: 0.95 }}
@@ -303,7 +310,7 @@ function Deals() {
                       <CartIcon size={16} />
                       Add to Cart
                     </motion.button>
-                    <button className="p-2 border-2 border-gray-300 rounded-full hover:border-accent hover:text-accent transition-colors" aria-label="Add to wishlist">
+                    <button type="button" className="p-2 border-2 border-gray-300 rounded-full hover:border-accent hover:text-accent transition-colors" aria-label="Add to wishlist">
                       <Heart size={20} />
                     </button>
                   </div>
@@ -324,14 +331,15 @@ function Deals() {
         transition={{ type: 'tween' }}
       >
         <div className="p-6">
-          <div className="flex justify-between items-center mb-6 pb-4 border-b">
+            <div className="flex justify-between items-center mb-6 pb-4 border-b">
             <h2 className="text-2xl font-bold text-secondary">Your Cart</h2>
             <button
+              type="button"
               onClick={() => setIsCartOpen(false)}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label="Close cart"
             >
-              ×
+              <X size={24} className="text-gray-500" />
             </button>
           </div>
 
@@ -351,26 +359,29 @@ function Deals() {
                       <p className="text-primary font-semibold mb-3">${item.price.toFixed(2)}</p>
                       <div className="flex items-center gap-3">
                         <button
+                          type="button"
                           onClick={() => decreaseQuantity(item.id)}
                           className="p-1 border rounded-full hover:bg-gray-100"
                           aria-label="Decrease quantity"
                         >
-                          −
+                          <Minus size={16} />
                         </button>
                         <span className="font-semibold w-8 text-center">{item.quantity}</span>
                         <button
+                          type="button"
                           onClick={() => increaseQuantity(item.id)}
                           className="p-1 border rounded-full hover:bg-gray-100"
                           aria-label="Increase quantity"
                         >
-                          +
+                          <Plus size={16} />
                         </button>
                         <button
+                          type="button"
                           onClick={() => removeFromCart(item.id)}
                           className="p-1 text-accent hover:bg-red-50 rounded-full ml-auto"
                           aria-label="Remove item"
                         >
-                          ×
+                          <Trash2 size={16} />
                         </button>
                       </div>
                     </div>
