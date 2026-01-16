@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Search, ShoppingCart, Heart, Trash2, Plus, Minus, X, Facebook, Twitter, Instagram, MapPin, Phone, Mail, User, Edit, Trash } from 'lucide-react';
+import { ShoppingBag, Search, ShoppingCart, Heart, Trash2, Plus, Minus, X, Facebook, Twitter, Instagram, MapPin, Phone, Mail, User, Edit, Trash, Download } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface Product {
@@ -61,6 +61,8 @@ function App() {
   const [filter, setFilter] = useState('all');
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
 
   // Fetch products from backend
   useEffect(() => {
@@ -140,6 +142,20 @@ function App() {
     setCart(prevCart => prevCart.filter(item => item.id !== productId));
   };
 
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+      } else {
+        console.log('User dismissed the install prompt');
+      }
+      setDeferredPrompt(null);
+      setShowInstallPrompt(false);
+    }
+  };
+
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
@@ -171,6 +187,16 @@ function App() {
                 <User size={18} />
                 Sign Up
               </Link>
+              {showInstallPrompt && (
+                <button
+                  onClick={handleInstallClick}
+                  className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition-colors"
+                  aria-label="Install app"
+                >
+                  <Download size={18} />
+                  Install
+                </button>
+              )}
               <div className="relative cursor-pointer hover:scale-110 transition-transform" onClick={() => setIsCartOpen(!isCartOpen)}>
                 <ShoppingCart size={24} />
                 <span className="absolute -top-2 -right-2 bg-accent text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">{totalItems}</span>
