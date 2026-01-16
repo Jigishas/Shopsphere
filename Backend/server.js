@@ -51,7 +51,7 @@ app.get('/', (req, res) => {
   res.send('Backend is running...');
 });
 
-app.use('/', router);
+app.use(router);
 
 // Connect to MongoDB
 const connectDB = async () => {
