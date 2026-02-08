@@ -173,6 +173,10 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     }
   };
 
+  const handleDismissInstall = () => {
+    setShowInstallPrompt(false);
+  };
+
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
@@ -234,17 +238,7 @@ const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   <User size={18} />
   Sign Up
 </Link>
-              {showInstallPrompt && (
-                <button
-                  type="button"
-                  onClick={handleInstallClick}
-                  className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition-colors"
-                  aria-label="Install app"
-                >
-                  <Download size={18} />
-                  Install
-                </button>
-              )}
+
               <button
                 type="button"
                 className="relative cursor-pointer hover:scale-110 transition-transform"
