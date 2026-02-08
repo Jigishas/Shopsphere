@@ -4,6 +4,7 @@ const urlsToCache = [
   '/src/main.tsx',
   '/src/App.tsx',
   '/src/index.css',
+  '/src/style.css',
   '/vite.svg',
   '/manifest.json',
   '/src/Signup.tsx',
@@ -12,7 +13,13 @@ const urlsToCache = [
   '/src/Categories.tsx',
   '/src/Deals.tsx',
   '/src/About.tsx',
-  '/src/Contact.tsx'
+  '/src/Contact.tsx',
+  '/src/AdminDashboard.tsx',
+  '/src/ShopFooter.tsx',
+  '/src/counter.ts',
+  '/src/typescript.svg',
+  '/Shopsphere.jpeg',
+  '/sw.js'
 ];
 
 // Install event - cache resources
