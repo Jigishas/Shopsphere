@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShoppingBag, Search, ShoppingCart, Heart, Trash2, Plus, Minus, X, 
   Facebook, Twitter, Instagram, MapPin, Phone, Mail, User,
-  Truck, Shield, Clock, RotateCcw, ArrowRight, Star, Zap
+  Truck, Shield, Clock, RotateCcw, ArrowRight, Star, Zap, Eye, Flame,
+  Sparkles, Timer
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -25,13 +26,6 @@ interface CartItem {
   price: number;
   quantity: number;
   image: string;
-}
-
-interface UserType {
-  id: string;
-  name: string;
-  email: string;
-  isAdmin: boolean;
 }
 
 const features = [
@@ -92,11 +86,10 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState<CartItem[]>(loadCartFromStorage);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [user, setUser] = useState<UserType | null>(null);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [email, setEmail] = useState('');
+  const [trendingFilter, setTrendingFilter] = useState('all');
+  const [hoveredProduct, setHoveredProduct] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -116,20 +109,6 @@ function App() {
   useEffect(() => {
     localStorage.setItem('shopsphere-cart', JSON.stringify(cart));
   }, [cart]);
-
-  useEffect(() => {
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      setShowInstallPrompt(true);
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-    };
-  }, []);
 
   const addToCart = (productId: number) => {
     const product = products.find(p => p.id === productId);
@@ -179,18 +158,6 @@ function App() {
     setCart(prevCart => prevCart.filter(item => item.id !== productId));
   };
 
-  const handleInstallClick = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        console.log('User accepted the install prompt');
-      }
-      setDeferredPrompt(null);
-      setShowInstallPrompt(false);
-    }
-  };
-
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     alert('Thank you for subscribing!');
@@ -200,7 +167,31 @@ function App() {
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  const featuredProducts = products.filter(p => p.isDeal || p.badge).slice(0, 4);
+  // Get trending products based on filter
+  const getTrendingProducts = () => {
+    let filtered = products;
+    if (trendingFilter !== 'all') {
+      filtered = products.filter(p => p.category === trendingFilter);
+    }
+    // Return products with deals first, then by price (lower to higher), up to 8 items
+    return filtered
+      .sort((a, b) => {
+        if (a.isDeal && !b.isDeal) return -1;
+        if (!a.isDeal && b.isDeal) return 1;
+        return a.price - b.price;
+      })
+      .slice(0, 8);
+  };
+
+  const trendingProducts = getTrendingProducts();
+
+  const trendingCategories = [
+    { id: 'all', label: 'All', icon: Sparkles },
+    { id: 'electronics', label: 'Electronics', icon: Zap },
+    { id: 'fashion', label: 'Fashion', icon: Star },
+    { id: 'home', label: 'Home', icon: ShoppingBag },
+    { id: 'sports', label: 'Sports', icon: Flame },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 overflow-x-hidden">
@@ -403,8 +394,8 @@ function App() {
         </div>
       </section>
 
-      {/* Featured Products Section */}
-      <section className="py-10 sm:py-16 bg-white">
+      {/* Trending Products Section */}
+      <section className="py-12 sm:py-20 bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto px-4">
           <motion.div
             className="text-center mb-8 sm:mb-12"
@@ -412,85 +403,202 @@ function App() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-2 rounded-full mb-4">
-              <Star className="w-4 h-4 fill-current" />
-              <span className="text-sm font-semibold">Featured Deals</span>
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-accent/20 to-primary/20 text-accent px-4 py-2 rounded-full mb-4">
+              <Flame className="w-4 h-4 fill-current" />
+              <span className="text-sm font-bold">Hot Right Now</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-secondary mb-3">Trending Now</h2>
-            <p className="text-gray-600 text-sm sm:text-base">Handpicked deals just for you</p>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-secondary mb-3">
+              Trending Now
+            </h2>
+            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto">
+              Discover what's flying off the shelves! Limited-time deals on our most popular items
+            </p>
           </motion.div>
+
+          {/* Category Filter Tabs */}
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 mb-8 sm:mb-12">
+            {trendingCategories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setTrendingFilter(cat.id)}
+                className={`flex items-center gap-2 px-4 py-2 sm:px-6 sm:py-3 rounded-full font-semibold text-sm transition-all ${
+                  trendingFilter === cat.id
+                    ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105'
+                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                }`}
+              >
+                <cat.icon className="w-4 h-4" />
+                {cat.label}
+              </button>
+            ))}
+          </div>
 
           {loading ? (
             <div className="flex justify-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {featuredProducts.length > 0 ? featuredProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group border border-gray-100"
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ y: -5 }}
-                >
-                  <div className="relative aspect-square overflow-hidden">
-                    <img 
-                      src={product.image} 
-                      alt={product.name} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                    />
-                    {product.badge && (
-                      <span className="absolute top-3 left-3 bg-accent text-white px-2 py-1 rounded text-xs font-semibold">
-                        {product.badge}
-                      </span>
-                    )}
-                    <button 
-                      className="absolute top-3 right-3 p-2 bg-white/90 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:text-accent"
-                      aria-label="Add to wishlist"
-                    >
-                      <Heart className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-gray-500 text-xs mb-1 capitalize">{product.category}</p>
-                    <h3 className="text-sm font-semibold mb-2 text-gray-900 line-clamp-2">{product.name}</h3>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="text-lg font-bold text-primary">${product.price.toFixed(2)}</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+              <AnimatePresence mode="wait">
+                {trendingProducts.length > 0 ? trendingProducts.map((product, index) => (
+                  <motion.div
+                    key={product.id}
+                    className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group border border-gray-100 relative"
+                    initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                    transition={{ delay: index * 0.05, duration: 0.3 }}
+                    whileHover={{ y: -8 }}
+                    onMouseEnter={() => setHoveredProduct(product.id)}
+                    onMouseLeave={() => setHoveredProduct(null)}
+                  >
+                    {/* Image Container */}
+                    <div className="relative aspect-square overflow-hidden bg-gray-100">
+                      <motion.img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover"
+                        animate={{ scale: hoveredProduct === product.id ? 1.1 : 1 }}
+                        transition={{ duration: 0.4 }}
+                      />
+                      
+                      {/* Overlay on Hover */}
+                      <motion.div 
+                        className="absolute inset-0 bg-black/40 flex items-center justify-center gap-3"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: hoveredProduct === product.id ? 1 : 0 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <button 
+                          className="p-3 bg-white rounded-full hover:bg-accent hover:text-white transition-colors shadow-lg"
+                          aria-label="Quick view"
+                        >
+                          <Eye className="w-5 h-5" />
+                        </button>
+                        <button 
+                          className="p-3 bg-white rounded-full hover:bg-accent hover:text-white transition-colors shadow-lg"
+                          aria-label="Add to wishlist"
+                        >
+                          <Heart className="w-5 h-5" />
+                        </button>
+                      </motion.div>
+
+                      {/* Badges */}
+                      <div className="absolute top-3 left-3 flex flex-col gap-2">
+                        {product.badge && (
+                          <span className="bg-accent text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
+                            {product.badge}
+                          </span>
+                        )}
+                        {product.isDeal && (
+                          <span className="bg-primary text-white px-3 py-1 rounded-full text-xs font-bold shadow-md flex items-center gap-1">
+                            <Timer className="w-3 h-3" />
+                            Deal
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Discount Badge */}
                       {product.originalPrice && (
-                        <span className="text-sm text-gray-400 line-through">${product.originalPrice.toFixed(2)}</span>
+                        <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-md">
+                          -{Math.round((1 - product.price / product.originalPrice) * 100)}%
+                        </div>
                       )}
                     </div>
-                    <motion.button
-                      type="button"
-                      className="w-full flex items-center justify-center gap-2 bg-primary text-white py-2.5 rounded-lg hover:bg-secondary transition-colors text-sm font-medium"
-                      onClick={() => addToCart(product.id)}
-                      whileTap={{ scale: 0.98 }}
+
+                    {/* Product Info */}
+                    <div className="p-4 sm:p-5">
+                      {/* Category & Rating */}
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-semibold text-primary uppercase tracking-wider bg-primary/10 px-2 py-1 rounded">
+                          {product.category}
+                        </span>
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star 
+                              key={i} 
+                              className={`w-3 h-3 ${i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`} 
+                            />
+                          ))}
+                          <span className="text-xs text-gray-500 ml-1">(4.5)</span>
+                        </div>
+                      </div>
+
+                      {/* Product Name */}
+                      <h3 className="font-bold text-base sm:text-lg text-gray-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                        {product.name}
+                      </h3>
+
+                      {/* Price Section */}
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-xl sm:text-2xl font-bold text-primary">
+                          ${product.price.toFixed(2)}
+                        </span>
+                        {product.originalPrice && (
+                          <span className="text-sm text-gray-400 line-through">
+                            ${product.originalPrice.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Stock Indicator */}
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div className="h-full bg-accent rounded-full" style={{ width: `${Math.random() * 40 + 40}%` }}></div>
+                        </div>
+                        <span className="text-xs text-gray-500">Selling fast!</span>
+                      </div>
+
+                      {/* Add to Cart Button */}
+                      <motion.button
+                        type="button"
+                        className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-primary to-secondary text-white py-3 rounded-xl hover:shadow-lg hover:shadow-primary/30 transition-all text-sm font-bold"
+                        onClick={() => addToCart(product.id)}
+                        whileTap={{ scale: 0.98 }}
+                        whileHover={{ scale: 1.02 }}
+                      >
+                        <ShoppingCart className="w-4 h-4" />
+                        Add to Cart
+                      </motion.button>
+                    </div>
+                  </motion.div>
+                )) : (
+                  <motion.div 
+                    className="col-span-full text-center py-16"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    <div className="bg-gray-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                      <ShoppingBag className="w-10 h-10 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500 text-lg">No products found in this category</p>
+                    <button 
+                      onClick={() => setTrendingFilter('all')}
+                      className="mt-4 text-primary font-semibold hover:underline"
                     >
-                      <ShoppingCart className="w-4 h-4" />
-                      Add to Cart
-                    </motion.button>
-                  </div>
-                </motion.div>
-              )) : (
-                <div className="col-span-full text-center py-12 text-gray-500">
-                  No featured products available
-                </div>
-              )}
+                      View all products
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           )}
 
-          <div className="text-center mt-8 sm:mt-12">
+          {/* View All CTA */}
+          <motion.div 
+            className="text-center mt-12 sm:mt-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
             <Link 
               to="/api/products"
-              className="inline-flex items-center gap-2 text-primary font-semibold hover:text-secondary transition-colors"
+              className="inline-flex items-center gap-3 bg-white text-primary border-2 border-primary px-8 py-4 rounded-full font-bold text-base hover:bg-primary hover:text-white transition-all shadow-lg hover:shadow-xl"
             >
-              View All Products
-              <ArrowRight className="w-4 h-4" />
+              Explore All Products
+              <ArrowRight className="w-5 h-5" />
             </Link>
-          </div>
+          </motion.div>
         </div>
       </section>
 
