@@ -9,6 +9,23 @@
 - [x] Analyzed current signup/login implementation
 - [x] Identified password hashing mismatch issue
 - [x] Created comprehensive fix plan
+- [x] Fixed login endpoint to use `user.comparePassword()` for bcrypt comparison
+- [x] Updated Signup.tsx to use `/api/users/signup` endpoint
+- [x] Created Vite proxy configuration for API requests
+- [x] Resolved port conflict (changed backend to port 3001)
+- [x] API tests passed - Signup working correctly
+- [x] API tests passed - Login working correctly with hashed passwords
+
+## Test Results:
+✅ Signup Test: User created successfully with JWT token
+✅ Login Test: User authenticated successfully with bcrypt password comparison
+
+## Changes Made:
+1. **Backend/server.js**: Fixed login password comparison using `user.comparePassword()`
+2. **client/src/Signup.tsx**: Changed API URL from hardcoded to `/api/users/signup`
+3. **client/vite.config.ts**: Added proxy configuration for `/api` requests
+4. **Backend/server.js**: Changed port to 3001 to avoid Windows system conflict
+
 - [x] Fixed login endpoint to use bcrypt.comparePassword()
 - [x] Updated Signup.tsx to use relative API URL (/api/users/signup)
 

@@ -757,4 +757,61 @@ function App() {
                 <a href="#" aria-label="Facebook" className="p-2 bg-white/10 rounded-full hover:bg-accent transition-colors">
                   <Facebook className="w-4 h-4" />
                 </a>
-                <a href="#" aria-label="Twitter
+                <a href="#" aria-label="Twitter" className="p-2 bg-white/10 rounded-full hover:bg-accent transition-colors">
+                  <Twitter className="w-4 h-4" />
+                </a>
+                <a href="#" aria-label="Instagram" className="p-2 bg-white/10 rounded-full hover:bg-accent transition-colors">
+                  <Instagram className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-3 text-sm">Quick Links</h3>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li><Link to="/" className="hover:text-accent transition-colors">Home</Link></li>
+                <li><Link to="/shop" className="hover:text-accent transition-colors">Shop</Link></li>
+                <li><Link to="/categories" className="hover:text-accent transition-colors">Categories</Link></li>
+                <li><Link to="/deals" className="hover:text-accent transition-colors">Deals</Link></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-3 text-sm">Customer Service</h3>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li><Link to="/about" className="hover:text-accent transition-colors">About Us</Link></li>
+                <li><Link to="/contact" className="hover:text-accent transition-colors">Contact</Link></li>
+                <li><a href="#" className="hover:text-accent transition-colors">FAQ</a></li>
+                <li><a href="#" className="hover:text-accent transition-colors">Shipping Info</a></li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-3 text-sm">Contact Us</h3>
+              <ul className="space-y-2 text-sm text-gray-300">
+                <li className="flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  <span>123 Shop Street, NY 10001</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Phone className="w-4 h-4" />
+                  <span>+1 (555) 123-4567</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  <span>support@shopsphere.com</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="border-t border-white/20 pt-6 sm:pt-8 text-center text-sm text-gray-400">
+            <p>&copy; {getCurrentYear()} ShopSphere. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+export default App;
