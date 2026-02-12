@@ -69,7 +69,8 @@ function Categories() {
             <nav>
               <ul className="hidden md:flex gap-6">
                 <li><Link to="/" className="hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all hover:after:w-full">Home</Link></li>
-                <li><Link to="/api/products" className="hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all hover:after:w-full">Shop</Link></li>
+                <li><Link to="/shop" className="hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all hover:after:w-full">Shop</Link></li>
+
                 <li><Link to="/categories" className="text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-accent after:transition-all">Categories</Link></li>
                 <li><Link to="/deals" className="hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all hover:after:w-full">Deals</Link></li>
                 <li><Link to="/about" className="hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all hover:after:w-full">About</Link></li>
@@ -80,7 +81,8 @@ function Categories() {
               <div className="container mx-auto px-4">
                 <div className="flex flex-col gap-4">
                   <Link to="/" className="hover:text-accent transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-                  <Link to="/api/products" className="hover:text-accent transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Shop</Link>
+                  <Link to="/shop" className="hover:text-accent transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Shop</Link>
+
                   <Link to="/categories" className="text-accent transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Categories</Link>
                   <Link to="/deals" className="hover:text-accent transition-colors" onClick={() => setIsMobileMenuOpen(false)}>Deals</Link>
                   <Link to="/about" className="hover:text-accent transition-colors" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
@@ -155,9 +157,10 @@ function Categories() {
                   <h3 className="text-2xl font-bold mb-3 text-secondary">{category.name}</h3>
                   <p className="text-gray-600 mb-4 leading-relaxed">{category.description}</p>
                   <Link
-                    to="/api/products"
+                    to="/shop"
                     className="inline-flex items-center gap-2 text-primary font-semibold hover:text-accent transition-colors group"
                   >
+
                     Explore {category.name}
                     <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                   </Link>

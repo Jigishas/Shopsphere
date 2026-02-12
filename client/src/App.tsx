@@ -217,7 +217,7 @@ function App() {
             <nav className="hidden md:block">
               <ul className="flex gap-6 text-sm">
                 <li><Link to="/" className="hover:text-accent transition-colors">Home</Link></li>
-                <li><Link to="/api/products" className="hover:text-accent transition-colors">Shop</Link></li>
+                <li><Link to="/shop" className="hover:text-accent transition-colors">Shop</Link></li>
                 <li><Link to="/categories" className="hover:text-accent transition-colors">Categories</Link></li>
                 <li><Link to="/deals" className="hover:text-accent transition-colors">Deals</Link></li>
               </ul>
@@ -259,7 +259,7 @@ function App() {
         <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} absolute top-full left-0 right-0 bg-primary text-white py-4 z-50 shadow-lg`}>
           <div className="container mx-auto px-4 flex flex-col gap-3">
             <Link to="/" className="hover:text-accent transition-colors py-2" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-            <Link to="/api/products" className="hover:text-accent transition-colors py-2" onClick={() => setIsMobileMenuOpen(false)}>Shop</Link>
+            <Link to="/shop" className="hover:text-accent transition-colors py-2" onClick={() => setIsMobileMenuOpen(false)}>Shop</Link>
             <Link to="/categories" className="hover:text-accent transition-colors py-2" onClick={() => setIsMobileMenuOpen(false)}>Categories</Link>
             <Link to="/deals" className="hover:text-accent transition-colors py-2" onClick={() => setIsMobileMenuOpen(false)}>Deals</Link>
             <Link to="/about" className="hover:text-accent transition-colors py-2" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
@@ -307,7 +307,7 @@ function App() {
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4 sm:px-0">
               <Link 
-                to="/api/products"
+                to="/shop"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-accent text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:shadow-lg hover:scale-105 transition-all"
               >
                 Shop Now 
@@ -592,7 +592,7 @@ function App() {
             viewport={{ once: true }}
           >
             <Link 
-              to="/api/products"
+              to="/shop"
               className="inline-flex items-center gap-3 bg-white text-primary border-2 border-primary px-8 py-4 rounded-full font-bold text-base hover:bg-primary hover:text-white transition-all shadow-lg hover:shadow-xl"
             >
               Explore All Products
@@ -757,61 +757,4 @@ function App() {
                 <a href="#" aria-label="Facebook" className="p-2 bg-white/10 rounded-full hover:bg-accent transition-colors">
                   <Facebook className="w-4 h-4" />
                 </a>
-                <a href="#" aria-label="Twitter" className="p-2 bg-white/10 rounded-full hover:bg-accent transition-colors">
-                  <Twitter className="w-4 h-4" />
-                </a>
-                <a href="#" aria-label="Instagram" className="p-2 bg-white/10 rounded-full hover:bg-accent transition-colors">
-                  <Instagram className="w-4 h-4" />
-                </a>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-3 text-sm sm:text-base">Quick Links</h3>
-              <ul className="space-y-2 text-sm text-gray-300">
-                <li><Link to="/" className="hover:text-white transition-colors">Home</Link></li>
-                <li><Link to="/api/products" className="hover:text-white transition-colors">Shop</Link></li>
-                <li><Link to="/about" className="hover:text-white transition-colors">About</Link></li>
-                <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-3 text-sm sm:text-base">Customer Service</h3>
-              <ul className="space-y-2 text-sm text-gray-300">
-                <li><a href="#" className="hover:text-white transition-colors">Shipping</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Returns</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Support</a></li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-3 text-sm sm:text-base">Contact</h3>
-              <ul className="space-y-2 text-sm text-gray-300">
-                <li className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 shrink-0" />
-                  <span className="truncate">123 Commerce St, City</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 shrink-0" />
-                  <span>+1 (555) 123-4567</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 shrink-0" />
-                  <span className="truncate">support@shopsphere.com</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="text-center pt-6 sm:pt-8 border-t border-white/10">
-            <p className="text-gray-400 text-xs sm:text-sm">&copy; {getCurrentYear()} ShopSphere. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-    </div>
-  );
-}
-
-export default App;
+                <a href="#" aria-label="Twitter
