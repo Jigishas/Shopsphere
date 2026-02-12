@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { motion } from 'framer-motion';
 import { ShoppingBag, Search, ShoppingCart, User, Facebook, Twitter, Instagram, MapPin, Phone, Mail, Award, Users, Truck, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';

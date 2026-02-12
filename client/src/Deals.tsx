@@ -68,8 +68,9 @@ function Deals() {
     const calculateTimeLeft = () => {
       const now = new Date();
       const currentHour = now.getHours();
-      const currentMinute = now.getMinutes();
-      const currentSecond = now.getSeconds();
+      const _currentMinute = now.getMinutes();    
+      const _currentSecond = now.getSeconds();    
+
 
       // Calculate the next 2-hour interval starting from 00:00
       const hoursSinceMidnight = currentHour;

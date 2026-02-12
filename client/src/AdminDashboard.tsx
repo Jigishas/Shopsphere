@@ -3,10 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Edit, Trash2, Plus, Users, Package, BarChart3, LogOut, 
   Search, X, CheckCircle, AlertCircle, TrendingUp,
-  DollarSign, ShoppingCart, Eye, Grid, List, RefreshCw, Settings, Shield, Download
+  DollarSign, ShoppingCart, Eye, Grid, List, RefreshCw, Shield
 } from 'lucide-react';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 
 interface Product {
   _id: string;
@@ -44,11 +45,12 @@ function AdminDashboard() {
   const [showAddProduct, setShowAddProduct] = useState(false);
   const [showEditProduct, setShowEditProduct] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-  const [showUserDetails, setShowUserDetails] = useState<User | null>(null);
+  const [_showUserDetails, setShowUserDetails] = useState<User | null>(null);
   const [filterCategory, setFilterCategory] = useState('all');
   
   // Stats state
-  const [stats, setStats] = useState({
+  const [stats, _setStats] = useState({
+
     totalProducts: 0,
     totalUsers: 0,
     totalRevenue: 0,
