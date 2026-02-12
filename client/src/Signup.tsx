@@ -119,7 +119,8 @@ function Signup() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://shopsphere-p12m.onrender.com/api/signup', {
+      const response = await fetch('/api/users/signup', {
+
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

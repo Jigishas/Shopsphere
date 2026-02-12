@@ -92,10 +92,12 @@ app.post('/api/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // Check password (in a real app, compare hashed passwords)
-    if (user.password !== password) {
+    // Check password using bcrypt comparison
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
+
 
     res.status(200).json({
       message: 'Login successful',
