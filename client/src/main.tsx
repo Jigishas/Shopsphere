@@ -18,12 +18,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Route path="/" element={<App />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-
+        <Route path="/shop" element={<Shop />} />
         <Route path="/categories" element={<Categories />} />
         <Route path="/deals" element={<Deals />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/api/products" element={<Shop />} />
         <Route path="*" element={<h1>404: Page Not Found</h1>} />
       </Routes>
     </Router>
