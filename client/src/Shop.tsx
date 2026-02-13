@@ -1,10 +1,14 @@
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ShoppingCart, Heart, Search, ShoppingBag, User, Plus, Minus, X, Trash2, Rocket, Globe, Sparkles, Gem, Wind, Leaf, Star, Quote, ArrowRight, CheckCircle, Sofa, Clock, Shirt, Footprints, Coffee, Armchair, SprayCan } from 'lucide-react';
-
-
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ShoppingCart, Heart, Search, ShoppingBag, User, Plus, Minus, X, Trash2, Rocket, Globe, Sparkles, Gem, Wind, Leaf, Star, Quote, ArrowRight, CheckCircle, Sofa, Clock, Shirt, Footprints, Coffee, Armchair, SprayCan, Loader2, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ShopFooter from './ShopFooter';
+
+
+import { ToastContainer, useToast, subscribeToToasts, type Toast } from './components/Toast';
+import { SkeletonGrid, SkeletonCard } from './components/SkeletonLoader';
+
+
 
 
 interface Product {
@@ -27,26 +31,21 @@ interface CartItem {
   image: string;
 }
 
+
+
 function Shop() {
+  const { addToast } = useToast();
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   // Load cart from localStorage on mount
   const loadCartFromStorage = (): CartItem[] => {
     const storedCart = localStorage.getItem('shopsphere-cart');
-    return storedCart ? JSON.parse(storedCart) : [
-      {
-        id: 1,
-        name: "Wireless Bluetooth Headphones",
-        price: 79.99,
-        quantity: 1,
-        image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
-      },
-      {
-        id: 3,
-        name: "Casual Summer Dress",
-        price: 45.99,
-        quantity: 2,
-        image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80"
-      }
-    ];
+    return storedCart ? JSON.parse(storedCart) : [];
   };
 
   const [cart, setCart] = useState<CartItem[]>(loadCartFromStorage);
@@ -54,65 +53,90 @@ function Shop() {
   const [filter, setFilter] = useState('all');
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
-  const [_isModalOpen, setIsModalOpen] = useState(false);
 
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [formData, setFormData] = useState({
-    id: 0,
-    name: '',
-    category: '',
-    price: 0,
-    originalPrice: 0,
-    image: '',
-    badge: '',
-    isDeal: false
-  });
+  // Subscribe to toasts
+  useEffect(() => {
+    return subscribeToToasts(setToasts);
+  }, []);
 
   // Fetch products from API
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    setError(null);
     try {
       const response = await fetch('https://shopsphere-p12m.onrender.com/api/products');
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
       const data = await response.json();
       setProducts(data);
       setFilteredProducts(data);
     } catch (err) {
       console.error('Error fetching products:', err);
-      console.log( err)
+      setError(err instanceof Error ? err.message : 'Failed to load products');
+      addToast('Failed to load products. Please try again.', 'error');
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [addToast]);
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [fetchProducts]);
+
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('shopsphere-cart', JSON.stringify(cart));
   }, [cart]);
 
+  // Filter and search products
   useEffect(() => {
-    if (filter === 'all') {
-      setFilteredProducts(products);
-    } else {
-      setFilteredProducts(products.filter(product => product.category === filter));
+    let result = products;
+    
+    // Apply category filter
+    if (filter !== 'all') {
+      result = result.filter(product => product.category === filter);
     }
-  }, [filter, products]);
+    
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(product => 
+        product.name.toLowerCase().includes(query) ||
+        product.category.toLowerCase().includes(query)
+      );
+    }
+    
+    setFilteredProducts(result);
+  }, [filter, products, searchQuery]);
 
-  const addToCart = (productId: number) => {
+  // Debounced search handler
+  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsSearching(true);
+    const value = e.target.value;
+    setTimeout(() => {
+      setSearchQuery(value);
+      setIsSearching(false);
+    }, 300);
+  }, []);
+
+
+  const addToCart = useCallback((productId: number) => {
     const product = products.find(p => p.id === productId);
     if (!product) return;
-
-
 
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.id === productId);
       if (existingItem) {
+        addToast(`Updated ${product.name} quantity in cart`, 'success');
         return prevCart.map(item =>
           item.id === productId
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
+        addToast(`${product.name} added to cart!`, 'success');
         return [...prevCart, {
           id: product.id,
           name: product.name,
@@ -123,7 +147,8 @@ function Shop() {
       }
     });
     setIsCartOpen(true);
-  };
+  }, [products, addToast]);
+
 
   const increaseQuantity = (productId: number) => {
     setCart(prevCart =>
@@ -145,41 +170,20 @@ function Shop() {
     );
   };
 
-  const removeFromCart = (productId: number) => {
+  const removeFromCart = useCallback((productId: number) => {
+    const item = cart.find(item => item.id === productId);
     setCart(prevCart => prevCart.filter(item => item.id !== productId));
-  };
+    if (item) {
+      addToast(`${item.name} removed from cart`, 'info');
+    }
+  }, [cart, addToast]);
 
-  const handleCreateProduct = () => {
-    setEditingProduct(null);
-    setFormData({
-      id: Math.max(...products.map(p => p.id), 0) + 1,
-      name: '',
-      category: '',
-      price: 0,
-      originalPrice: 0,
-      image: '',
-      badge: '',
-      isDeal: false
-    });
-    setIsModalOpen(true);
-  };
 
-  const handleEditProduct = (product: Product) => {
-    setEditingProduct(product);
-    setFormData({
-      id: product.id,
-      name: product.name,
-      category: product.category,
-      price: product.price,
-      originalPrice: product.originalPrice || 0,
-      image: product.image,
-      badge: product.badge || '',
-      isDeal: product.isDeal
-    });
-    setIsModalOpen(true);
-  };
 
+
+  // Admin delete function
   const handleDeleteProduct = async (productId: string) => {
+
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         const response = await fetch(`https://shopsphere-p12m.onrender.com/api/products/${productId}`, {
@@ -187,28 +191,34 @@ function Shop() {
           credentials: 'include'
         });
         if (response.ok) {
+          addToast('Product deleted successfully', 'success');
           fetchProducts();
         } else {
-          console.error('Error deleting product');
+          addToast('Failed to delete product', 'error');
         }
       } catch (error) {
         console.error('Error deleting product:', error);
+        addToast('Error deleting product', 'error');
       }
     }
   };
 
-  const _handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement form submission
-    console.log('Form submitted');
-  };
 
 
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
+  // Get spotlight products (first 3 deals or featured products)
+  const spotlightProducts = useMemo(() => {
+    return products
+      .filter(p => p.isDeal || p.badge)
+      .slice(0, 3);
+  }, [products]);
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
+      <ToastContainer toasts={toasts} onRemove={(id) => setToasts(prev => prev.filter(t => t.id !== id))} />
+
       {/* Header */}
       <header className="bg-gradient-to-r from-primary to-secondary text-white py-4 sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto px-4">
@@ -229,9 +239,20 @@ function Shop() {
             </nav>
             <div className="flex items-center gap-4">
               <div className="relative">
-                <input type="text" placeholder="Search products..." className="pl-4 pr-10 py-2 rounded-full bg-white/20 text-white placeholder-white/70 border-none outline-none w-64 focus:ring-2 focus:ring-accent transition-all" />
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
+                <input 
+                  type="text" 
+                  placeholder="Search products..." 
+                  value={searchQuery}
+                  onChange={handleSearch}
+                  className="pl-4 pr-10 py-2 rounded-full bg-white/20 text-white placeholder-white/70 border-none outline-none w-64 focus:ring-2 focus:ring-accent transition-all"
+                />
+                {isSearching ? (
+                  <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70 animate-spin" size={18} />
+                ) : (
+                  <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />
+                )}
               </div>
+
               <Link to="/signup" className="flex items-center gap-2 bg-accent text-white px-4 py-2 rounded-full hover:bg-accent/80 transition-colors">
                 <User size={18} />
                 Sign Up
@@ -399,48 +420,62 @@ function Shop() {
               bestsellers & limited drops – as infinite as your curiosity
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
-            {[
-              { id: 101, icon: <Coffee size={56} />, category: 'ceramics', title: 'Raku vessel', price: 140, oldPrice: 190, rating: 4.5 },
-              { id: 102, icon: <Armchair size={56} />, category: 'furniture', title: 'Pebble stool', price: 390, rating: 5 },
-              { id: 103, icon: <SprayCan size={56} />, category: 'fragrance', title: 'Santal sphere', price: 85, rating: 5 },
-            ].map((product, index) => (
-              <motion.div
-                key={product.id}
-
-                className="bg-white rounded-[32px] p-6 shadow-sm hover:shadow-lg transition-all border border-transparent hover:border-[#e6dbd7]"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.15 }}
-              >
-                <div className="bg-[#ece3e0] h-48 rounded-3xl flex items-center justify-center mb-6 text-[#5e423d]">
-                  {product.icon}
-                </div>
-                <p className="text-xs uppercase tracking-widest text-[#a18882] font-semibold mb-2">{product.category}</p>
-                <h3 className="text-xl font-bold text-secondary mb-2">{product.title}</h3>
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="text-xl font-bold text-secondary">${product.price}</span>
-                  {product.oldPrice && (
-                    <span className="text-gray-400 line-through">${product.oldPrice}</span>
-                  )}
-                </div>
-                <div className="flex gap-1 mb-5 text-[#c6a69b]">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={16} fill={i < Math.floor(product.rating) ? "currentColor" : "none"} />
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  onClick={() => addToCart(product.id)}
-                  className="w-full py-3 rounded-full border border-[#e3d9d5] text-secondary font-semibold hover:bg-[#f5f0ed] transition-colors"
+          
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+              {[1, 2, 3].map((i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          ) : spotlightProducts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+              {spotlightProducts.map((product, index) => (
+                <motion.div
+                  key={product._id}
+                  className="bg-white rounded-[32px] p-6 shadow-sm hover:shadow-lg transition-all border border-transparent hover:border-[#e6dbd7]"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.15 }}
                 >
-                  add to cart
-                </button>
+                  <div className="bg-[#ece3e0] h-48 rounded-3xl overflow-hidden mb-6">
+                    <img 
+                      src={product.image} 
+                      alt={product.name}
+                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                  </div>
+                  <p className="text-xs uppercase tracking-widest text-[#a18882] font-semibold mb-2">{product.category}</p>
+                  <h3 className="text-xl font-bold text-secondary mb-2">{product.name}</h3>
+                  <div className="flex items-center gap-3 mb-3">
+                    <span className="text-xl font-bold text-secondary">${product.price}</span>
+                    {product.originalPrice && (
+                      <span className="text-gray-400 line-through">${product.originalPrice}</span>
+                    )}
+                  </div>
+                  <div className="flex gap-1 mb-5 text-[#c6a69b]">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={16} fill={i < 4 ? "currentColor" : "none"} />
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => addToCart(product.id)}
+                    className="w-full py-3 rounded-full border border-[#e3d9d5] text-secondary font-semibold hover:bg-[#f5f0ed] transition-colors"
+                  >
+                    add to cart
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 mb-10">
+              <Package className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+              <p className="text-gray-500">No featured products available</p>
+            </div>
+          )}
 
-              </motion.div>
-            ))}
-          </div>
           <div className="text-center">
             <Link to="/categories" className="inline-flex items-center gap-2 bg-[#977a74] text-white px-8 py-4 rounded-full font-semibold hover:bg-[#7a635e] transition-colors">
               view all products <ArrowRight size={20} />
@@ -537,10 +572,14 @@ function Shop() {
             transition={{ duration: 0.5 }}
           >
             <h1 className="text-4xl font-bold text-secondary mb-4">All Products</h1>
-            <p className="text-xl text-gray-600">Discover our complete collection of premium products</p>
+            <p className="text-xl text-gray-600">
+              {searchQuery 
+                ? `Search results for "${searchQuery}" (${filteredProducts.length} found)`
+                : 'Discover our complete collection of premium products'
+              }
+            </p>
             <div className="w-20 h-1 bg-accent mx-auto mt-4 rounded"></div>
           </motion.div>
-
 
           <div className="flex justify-center gap-4 mb-12 flex-wrap">
             {['all', 'electronics', 'fashion', 'home', 'sports'].map((category) => (
@@ -559,67 +598,139 @@ function Shop() {
             ))}
           </div>
 
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
-            layout
-          >
-            {filteredProducts.map((product, index) => (
-              <motion.div
-                key={product._id}
-                className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -10 }}
+          {loading ? (
+            <SkeletonGrid count={8} />
+          ) : error ? (
+            <div className="text-center py-16">
+              <div className="bg-red-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <X className="w-10 h-10 text-red-500" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Failed to load products</h3>
+              <p className="text-gray-600 mb-4">{error}</p>
+              <button
+                onClick={fetchProducts}
+                className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-secondary transition-colors"
               >
-                <div className="relative h-48 overflow-hidden">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-                  {product.badge && (
-                    <span className="absolute top-4 left-4 bg-accent text-white px-3 py-1 rounded text-sm font-semibold">
-                      {product.badge}
-                    </span>
-                  )}
-                </div>
-                <div className="p-6">
-                  <p className="text-gray-500 text-sm mb-2 capitalize">{product.category}</p>
-                  <h3 className="text-lg font-semibold mb-3 text-gray-900">{product.name}</h3>
-                  <div className="flex items-center gap-3 mb-4">
-                    <span className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</span>
-                    {product.originalPrice && (
-                      <span className="text-lg text-gray-500 line-through">${product.originalPrice.toFixed(2)}</span>
-                    )}
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <motion.button
-                      type="button"
-                      className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
-                      onClick={() => addToCart(product.id)}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <ShoppingCart size={16} />
-                      Add to Cart
-                    </motion.button>
+                <Loader2 className="w-4 h-4" />
+                Try Again
+              </button>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-16">
+              <Package className="w-20 h-20 mx-auto text-gray-300 mb-4" />
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
+              <p className="text-gray-600 mb-4">
+                {searchQuery 
+                  ? `No products match "${searchQuery}". Try a different search term.`
+                  : 'No products available in this category.'
+                }
+              </p>
+              {(searchQuery || filter !== 'all') && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('');
+                    setFilter('all');
+                  }}
+                  className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-secondary transition-colors"
+                >
+                  Clear Filters
+                </button>
+              )}
+            </div>
+          ) : (
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+              layout
+            >
+              <AnimatePresence>
+                {filteredProducts.map((product, index) => (
 
-                    <button type="button" className="p-2 border-2 border-gray-300 rounded-full hover:border-accent hover:text-accent transition-colors" aria-label="Add to wishlist">
-                      <Heart size={20} />
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
+                  <motion.div
+                    key={product._id}
+                    className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ delay: index * 0.05 }}
+                    whileHover={{ y: -10 }}
+                    layout
+                  >
+                    <div className="relative h-48 overflow-hidden">
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        loading="lazy"
+                      />
+                      {product.badge && (
+                        <span className="absolute top-4 left-4 bg-accent text-white px-3 py-1 rounded text-sm font-semibold">
+                          {product.badge}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="p-6">
+                      <p className="text-gray-500 text-sm mb-2 capitalize">{product.category}</p>
+                      <h3 className="text-lg font-semibold mb-3 text-gray-900 line-clamp-2">{product.name}</h3>
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-2xl font-bold text-primary">${product.price.toFixed(2)}</span>
+                        {product.originalPrice && (
+                          <span className="text-lg text-gray-500 line-through">${product.originalPrice.toFixed(2)}</span>
+                        )}
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <motion.button
+                          type="button"
+                          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
+                          onClick={() => addToCart(product.id)}
+                          whileTap={{ scale: 0.95 }}
+                          aria-label={`Add ${product.name} to cart`}
+                        >
+                          <ShoppingCart size={16} />
+                          Add to Cart
+                        </motion.button>
+
+                        <button 
+                          type="button" 
+                          className="p-2 border-2 border-gray-300 rounded-full hover:border-accent hover:text-accent transition-colors" 
+                          aria-label={`Add ${product.name} to wishlist`}
+                        >
+                          <Heart size={20} />
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          )}
         </div>
       </div>
 
+
+      {/* Cart Overlay */}
+      <AnimatePresence>
+        {isCartOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 z-40"
+            onClick={() => setIsCartOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Cart Sidebar */}
       <motion.div
-        className={`fixed top-0 right-0 w-96 h-full bg-white shadow-2xl z-50 overflow-y-auto ${
-          isCartOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-        initial={false}
-        animate={{ x: isCartOpen ? 0 : 400 }}
-        transition={{ type: 'tween' }}
+        className="fixed top-0 right-0 w-96 h-full bg-white shadow-2xl z-50 overflow-y-auto"
+        initial={{ x: '100%' }}
+        animate={{ x: isCartOpen ? 0 : '100%' }}
+        transition={{ type: 'tween', duration: 0.3 }}
+        aria-hidden={!isCartOpen}
       >
+
         <div className="p-6">
           <div className="flex justify-between items-center mb-6 pb-4 border-b">
             <h2 className="text-2xl font-bold text-secondary">Your Cart</h2>
@@ -641,9 +752,16 @@ function Shop() {
           {cart.length === 0 ? (
             <div className="text-center py-12">
               <ShoppingCart size={60} className="mx-auto text-gray-300 mb-4" />
-              <p className="text-gray-500">Your cart is empty</p>
+              <p className="text-gray-500 mb-4">Your cart is empty</p>
+              <button
+                onClick={() => setIsCartOpen(false)}
+                className="text-primary font-semibold hover:text-secondary transition-colors"
+              >
+                Continue Shopping
+              </button>
             </div>
           ) : (
+
             <>
               <div className="space-y-4 mb-6">
               {cart.map((item) => (
@@ -690,13 +808,21 @@ function Shop() {
                   <span>Total:</span>
                   <span className="text-primary">${totalPrice.toFixed(2)}</span>
                 </div>
-                <a
-                  href="#"
+                <button
+                  type="button"
                   className="block w-full bg-primary text-white py-4 rounded-xl font-semibold text-center hover:bg-secondary transition-colors"
+                  onClick={() => addToast('Checkout coming soon!', 'info')}
                 >
                   Proceed to Checkout
-                </a>
+                </button>
+                <button
+                  onClick={() => setIsCartOpen(false)}
+                  className="block w-full mt-3 text-gray-500 hover:text-gray-700 text-sm"
+                >
+                  Continue Shopping
+                </button>
               </div>
+
             </>
           )}
         </div>

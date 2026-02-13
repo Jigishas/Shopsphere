@@ -1,12 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ShoppingBag, Search, ShoppingCart, Heart, Trash2, Plus, Minus, X, 
   Facebook, Twitter, Instagram, MapPin, Phone, Mail, User,
   Truck, Shield, Clock, RotateCcw, ArrowRight, Star, Zap, Eye, Flame,
-  Sparkles, Timer
+  Sparkles, Timer, Loader2, Package
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { ToastContainer, useToast, subscribeToToasts, type Toast } from './components/Toast';
+import { SkeletonGrid, SkeletonCard, SkeletonHero, SkeletonCategory } from './components/SkeletonLoader';
+
 
 interface Product {
   _id: string;
@@ -74,7 +78,9 @@ const categories = [
   }
 ];
 
-function App() {
+function AppContent() {
+  const { addToast } = useToast();
+  const [toasts, setToasts] = useState<Toast[]>([]);
   const getCurrentYear = () => new Date().getFullYear();
 
   const loadCartFromStorage = (): CartItem[] => {
@@ -84,6 +90,7 @@ function App() {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [cart, setCart] = useState<CartItem[]>(loadCartFromStorage);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -91,38 +98,54 @@ function App() {
   const [trendingFilter, setTrendingFilter] = useState('all');
   const [hoveredProduct, setHoveredProduct] = useState<number | null>(null);
 
+  // Subscribe to toasts
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('https://shopsphere-p12m.onrender.com/api/products');
-        const data = await response.json();
-        setProducts(data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setLoading(false);
-      }
-    };
-    fetchProducts();
+    return subscribeToToasts(setToasts);
   }, []);
+
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('https://shopsphere-p12m.onrender.com/api/products');
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
+      const data = await response.json();
+      setProducts(data);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load products');
+      addToast('Failed to load products. Please try again.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  }, [addToast]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
 
   useEffect(() => {
     localStorage.setItem('shopsphere-cart', JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (productId: number) => {
+  const addToCart = useCallback((productId: number) => {
     const product = products.find(p => p.id === productId);
     if (!product) return;
 
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.id === productId);
       if (existingItem) {
+        addToast(`Updated ${product.name} quantity in cart`, 'success');
         return prevCart.map(item =>
           item.id === productId
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
+        addToast(`${product.name} added to cart!`, 'success');
         return [...prevCart, {
           id: product.id,
           name: product.name,
@@ -133,7 +156,8 @@ function App() {
       }
     });
     setIsCartOpen(true);
-  };
+  }, [products, addToast]);
+
 
   const increaseQuantity = (productId: number) => {
     setCart(prevCart =>
@@ -154,15 +178,21 @@ function App() {
     );
   };
 
-  const removeFromCart = (productId: number) => {
+  const removeFromCart = useCallback((productId: number) => {
+    const item = cart.find(item => item.id === productId);
     setCart(prevCart => prevCart.filter(item => item.id !== productId));
-  };
+    if (item) {
+      addToast(`${item.name} removed from cart`, 'info');
+    }
+  }, [cart, addToast]);
+
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Thank you for subscribing!');
+    addToast('Thank you for subscribing! Check your email for confirmation.', 'success');
     setEmail('');
   };
+
 
   const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
   const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -195,6 +225,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 overflow-x-hidden">
+      <ToastContainer toasts={toasts} onRemove={(id) => setToasts(prev => prev.filter(t => t.id !== id))} />
+
       {/* Header */}
       <header className="bg-gradient-to-r from-primary to-secondary text-white py-3 sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto px-4">
@@ -276,55 +308,60 @@ function App() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary via-secondary to-primary text-white py-12 sm:py-16 lg:py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center opacity-20"></div>
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-secondary/90"></div>
-        
-        <div className="container mx-auto px-4 relative">
-          <motion.div
-            className="text-center max-w-3xl mx-auto"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <motion.div 
-              className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-4 sm:mb-6"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.2 }}
+      {loading ? (
+        <SkeletonHero />
+      ) : (
+        <section className="relative bg-gradient-to-br from-primary via-secondary to-primary text-white py-12 sm:py-16 lg:py-20 overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center opacity-20"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 to-secondary/90"></div>
+          
+          <div className="container mx-auto px-4 relative">
+            <motion.div
+              className="text-center max-w-3xl mx-auto"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
             >
-              <Zap className="w-4 h-4 text-accent" />
-              <span className="text-sm font-medium">Summer Sale Live Now</span>
+              <motion.div 
+                className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full mb-4 sm:mb-6"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <Zap className="w-4 h-4 text-accent" />
+                <span className="text-sm font-medium">Summer Sale Live Now</span>
+              </motion.div>
+              
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
+                Discover Amazing <span className="text-accent">Deals</span>
+              </h1>
+              
+              <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 opacity-90 max-w-xl mx-auto px-4 sm:px-0">
+                Shop the latest trends in fashion, electronics, and more with exclusive discounts up to 50% off
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4 sm:px-0">
+                <Link 
+                  to="/shop"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-accent text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:shadow-lg hover:scale-105 transition-all"
+                >
+                  Shop Now 
+                  <motion.span animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
+                    <ArrowRight className="w-5 h-5" />
+                  </motion.span>
+                </Link>
+                <Link 
+                  to="/deals"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:bg-white/30 transition-all"
+                >
+                  View Deals
+                </Link>
+              </div>
             </motion.div>
-            
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight">
-              Discover Amazing <span className="text-accent">Deals</span>
-            </h1>
-            
-            <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 opacity-90 max-w-xl mx-auto px-4 sm:px-0">
-              Shop the latest trends in fashion, electronics, and more with exclusive discounts up to 50% off
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4 sm:px-0">
-              <Link 
-                to="/shop"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-accent text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:shadow-lg hover:scale-105 transition-all"
-              >
-                Shop Now 
-                <motion.span animate={{ x: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 1.5 }}>
-                  <ArrowRight className="w-5 h-5" />
-                </motion.span>
-              </Link>
-              <Link 
-                to="/deals"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 py-3 sm:px-8 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:bg-white/30 transition-all"
-              >
-                View Deals
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
+
 
       {/* Features Section */}
       <section className="py-8 sm:py-12 bg-white">
@@ -365,34 +402,44 @@ function App() {
             <p className="text-gray-600 text-sm sm:text-base">Explore our wide range of products</p>
           </motion.div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {categories.map((category, index) => (
-              <motion.div
-                key={category.name}
-                className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-all duration-300"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-              >
-                <div className="aspect-[4/3] sm:aspect-square">
-                  <img 
-                    src={category.image} 
-                    alt={category.name} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 text-white">
-                  <h3 className="text-lg sm:text-xl font-bold mb-1">{category.name}</h3>
-                  <p className="text-xs sm:text-sm opacity-90">{category.itemCount}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+          {loading ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <SkeletonCategory key={i} />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {categories.map((category, index) => (
+                <motion.div
+                  key={category.name}
+                  className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-md hover:shadow-xl transition-all duration-300"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  whileHover={{ y: -5 }}
+                >
+                  <div className="aspect-[4/3] sm:aspect-square">
+                    <img 
+                      src={category.image} 
+                      alt={category.name} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 text-white">
+                    <h3 className="text-lg sm:text-xl font-bold mb-1">{category.name}</h3>
+                    <p className="text-xs sm:text-sm opacity-90">{category.itemCount}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
+
 
       {/* Trending Products Section */}
       <section className="py-12 sm:py-20 bg-gradient-to-b from-white to-gray-50">
@@ -434,10 +481,35 @@ function App() {
           </div>
 
           {loading ? (
-            <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            <SkeletonGrid count={8} />
+          ) : error ? (
+            <div className="text-center py-16">
+              <div className="bg-red-50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <X className="w-10 h-10 text-red-500" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Failed to load products</h3>
+              <p className="text-gray-600 mb-4">{error}</p>
+              <button
+                onClick={fetchProducts}
+                className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-secondary transition-colors"
+              >
+                <Loader2 className="w-4 h-4" />
+                Try Again
+              </button>
+            </div>
+          ) : trendingProducts.length === 0 ? (
+            <div className="text-center py-16">
+              <Package className="w-20 h-20 mx-auto text-gray-300 mb-4" />
+              <p className="text-gray-500">No products found in this category</p>
+              <button 
+                onClick={() => setTrendingFilter('all')}
+                className="mt-4 text-primary font-semibold hover:underline"
+              >
+                View all products
+              </button>
             </div>
           ) : (
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
               <AnimatePresence mode="wait">
                 {trendingProducts.length > 0 ? trendingProducts.map((product, index) => (
@@ -556,10 +628,12 @@ function App() {
                         onClick={() => addToCart(product.id)}
                         whileTap={{ scale: 0.98 }}
                         whileHover={{ scale: 1.02 }}
+                        aria-label={`Add ${product.name} to cart`}
                       >
                         <ShoppingCart className="w-4 h-4" />
                         Add to Cart
                       </motion.button>
+
                     </div>
                   </motion.div>
                 )) : (
@@ -641,13 +715,22 @@ function App() {
         </div>
       </section>
 
+      {/* Cart Overlay */}
+      {isCartOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40"
+          onClick={() => setIsCartOpen(false)}
+        />
+      )}
+
       {/* Cart Sidebar */}
       <motion.div
-        className={`fixed top-0 right-0 w-full sm:w-96 h-full bg-white shadow-2xl z-50 overflow-y-auto ${isCartOpen ? 'translate-x-0' : 'translate-x-full'}`}
-        initial={false}
+        className="fixed top-0 right-0 w-full sm:w-96 h-full bg-white shadow-2xl z-50 overflow-y-auto"
+        initial={{ x: '100%' }}
         animate={{ x: isCartOpen ? 0 : '100%' }}
         transition={{ type: 'tween', duration: 0.3 }}
       >
+
         <div className="p-4 sm:p-6">
           <div className="flex justify-between items-center mb-4 sm:mb-6 pb-4 border-b">
             <h2 className="text-xl sm:text-2xl font-bold text-secondary">Your Cart ({totalItems})</h2>
@@ -664,15 +747,16 @@ function App() {
           {cart.length === 0 ? (
             <div className="text-center py-12">
               <ShoppingCart className="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-gray-300 mb-4" />
-              <p className="text-gray-500 text-sm sm:text-base">Your cart is empty</p>
+              <p className="text-gray-500 text-sm sm:text-base mb-4">Your cart is empty</p>
               <button
                 onClick={() => setIsCartOpen(false)}
-                className="mt-4 text-primary font-medium hover:text-secondary text-sm"
+                className="text-primary font-medium hover:text-secondary text-sm"
               >
                 Continue Shopping
               </button>
             </div>
           ) : (
+
             <>
               <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
                 {cart.map((item) => (
@@ -718,7 +802,10 @@ function App() {
                   <span>Total:</span>
                   <span className="text-primary">${totalPrice.toFixed(2)}</span>
                 </div>
-                <button className="w-full bg-primary text-white py-3 sm:py-4 rounded-xl font-semibold text-center hover:bg-secondary transition-colors text-sm sm:text-base">
+                <button 
+                  onClick={() => addToast('Checkout coming soon!', 'info')}
+                  className="w-full bg-primary text-white py-3 sm:py-4 rounded-xl font-semibold text-center hover:bg-secondary transition-colors text-sm sm:text-base"
+                >
                   Proceed to Checkout
                 </button>
                 <button 
@@ -728,6 +815,7 @@ function App() {
                   Continue Shopping
                 </button>
               </div>
+
             </>
           )}
         </div>
@@ -811,6 +899,14 @@ function App() {
         </div>
       </footer>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <AppContent />
+    </ErrorBoundary>
   );
 }
 

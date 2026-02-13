@@ -1,6 +1,8 @@
 import { Facebook, Twitter, Instagram, MapPin, Phone, Mail } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 function ShopFooter() {
+
   return (
     <footer className="bg-secondary text-white py-16">
       <div className="container mx-auto px-4">
@@ -31,12 +33,13 @@ function ShopFooter() {
               <div className="absolute bottom-0 left-0 w-12 h-1 bg-accent"></div>
             </h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Home</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Shop</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">About Us</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Contact</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">FAQ</a></li>
+              <li><Link to="/" className="text-gray-300 hover:text-white transition-colors">Home</Link></li>
+              <li><Link to="/shop" className="text-gray-300 hover:text-white transition-colors">Shop</Link></li>
+              <li><Link to="/about" className="text-gray-300 hover:text-white transition-colors">About Us</Link></li>
+              <li><Link to="/contact" className="text-gray-300 hover:text-white transition-colors">Contact</Link></li>
+              <li><Link to="/deals" className="text-gray-300 hover:text-white transition-colors">Deals</Link></li>
             </ul>
+
           </div>
           <div>
             <h3 className="text-xl font-semibold mb-4 relative">
@@ -44,12 +47,13 @@ function ShopFooter() {
               <div className="absolute bottom-0 left-0 w-12 h-1 bg-accent"></div>
             </h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Shipping Policy</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Return Policy</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Terms & Conditions</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors">Size Guide</a></li>
+              <li><Link to="/categories" className="text-gray-300 hover:text-white transition-colors">Categories</Link></li>
+              <li><Link to="/deals" className="text-gray-300 hover:text-white transition-colors">Special Deals</Link></li>
+              <li><Link to="/contact" className="text-gray-300 hover:text-white transition-colors">Support</Link></li>
+              <li><Link to="/login" className="text-gray-300 hover:text-white transition-colors">My Account</Link></li>
+              <li><Link to="/signup" className="text-gray-300 hover:text-white transition-colors">Join Us</Link></li>
             </ul>
+
           </div>
           <div>
             <h3 className="text-xl font-semibold mb-4 relative">
