@@ -9,16 +9,10 @@ const router = require('./Routers/productRouter');
 
 require('dotenv').config();
 
-// const app = express();
-// const PORT = 5000;
-
-
-// app.use(bodyParser.json());
-// app.use(express.json());
 
 // app.use(cors());
 const app = express();
-const PORT = 3001;
+const PORT = 3000;
 
 
 
