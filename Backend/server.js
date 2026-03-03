@@ -54,6 +54,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', router);
+// The cors middleware handles preflight requests automatically
+app.use('/api/users', userRouter);
 
 
 // Connect to MongoDB
@@ -74,8 +76,7 @@ app.get('/api/health', (req, res) => {
   const mongoState = mongoose.connection.readyState; // 0 = disconnected, 1 = connected
   res.status(200).json({ status: 'ok', mongoState });
 });
-// The cors middleware handles preflight requests automatically
-app.use('/api/users', userRouter);
+
 
 // Login endpoint
 
