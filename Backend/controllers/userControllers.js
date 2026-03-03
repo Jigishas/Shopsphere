@@ -6,10 +6,13 @@ const User=require('../model/users');
 
 exports.getusers = async (req,res)=>{
     try{
+      if (isAdmin){
     const users=await User.find();
     res.status(200).json({message: 'successful', users});
     console.log(users)
-
+      } else {
+        res.status(403).json({ message: 'Access denied' });
+      }
     } catch (err){
         console.log(err);
         res.status(500).json({ message: 'Error fetching users', error: err.message });

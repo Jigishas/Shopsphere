@@ -27,7 +27,6 @@ app.use(express.json());
 const allowedOrigins = [
   process.env.CLIENT_URL,
   'https://shopsphere-ye71.vercel.app',
-  'https://shopsphere-p12m.onrender.com',
   'http://localhost:5173'
 ].filter(Boolean);
 
