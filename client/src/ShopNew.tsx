@@ -347,12 +347,14 @@ function Shop() {
         {isProductModalOpen && selectedProduct && (
           <>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/50 z-40" onClick={() => setIsProductModalOpen(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setIsProductModalOpen(false)}>
-              <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4" onClick={() => setIsProductModalOpen(false)}>
+              <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md sm:max-w-xl lg:max-w-2xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                 <button type="button" onClick={() => setIsProductModalOpen(false)} className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full"><X size={20} /></button>
-                <div className="grid grid-cols-1 md:grid-cols-2">
-                  <div><img src={selectedProduct.image} alt={selectedProduct.name} className="w-full h-full object-cover" /></div>
-                  <div className="p-6 md:p-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="flex items-center justify-center">
+                    <img src={selectedProduct.image} alt={selectedProduct.name} className="w-full max-h-64 md:max-h-full object-cover rounded-lg" />
+                  </div>
+                  <div className="p-4 sm:p-6 md:p-8">
                     <p className="text-sm text-gray-500 uppercase tracking-wider mb-2">{selectedProduct.category}</p>
                     <h2 className="text-2xl font-bold mb-4">{selectedProduct.name}</h2>
                     <div className="flex items-center gap-3 mb-4">
