@@ -54,7 +54,7 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-gray-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <motion.div
         className="max-w-md w-full space-y-8"
         initial={{ opacity: 0, y: 20 }}
@@ -89,7 +89,7 @@ function Login() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none rounded-none relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 dark:bg-gray-700 dark:text-gray-100 rounded-t-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
                   placeholder="Email address"
                   value={formData.email}
                   onChange={handleChange}
@@ -110,7 +110,7 @@ function Login() {
                   type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
-                  className="appearance-none rounded-none relative block w-full px-10 pr-12 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full px-10 pr-12 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 dark:bg-gray-700 dark:text-gray-100 rounded-b-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleChange}
