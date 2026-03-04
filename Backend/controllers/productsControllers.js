@@ -28,7 +28,7 @@ exports.getProductsById = async (req, res) => {
 
 exports.postProduct = async (req, res) => {
   try {
-    const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
+    const { id, name, category, price, originalPrice, image, badge, isDeal, description, rating } = req.body;
     const newProduct = new Products({
       id,
       name,
@@ -37,7 +37,9 @@ exports.postProduct = async (req, res) => {
       originalPrice,
       image,
       badge,
-      isDeal
+      isDeal,
+      description: description || '',
+      rating: typeof rating === 'number' ? rating : 0,
     });
     const savedProduct = await newProduct.save();
     res.status(201).json(savedProduct);
@@ -48,10 +50,10 @@ exports.postProduct = async (req, res) => {
 
 exports.putProduct= async (req, res) => {
   try {
-    const { id, name, category, price, originalPrice, image, badge, isDeal } = req.body;
+    const { id, name, category, price, originalPrice, image, badge, isDeal, description, rating } = req.body;
     const updatedProduct = await Products.findByIdAndUpdate(
       req.params.id,
-      { id, name, category, price, originalPrice, image, badge, isDeal },
+      { id, name, category, price, originalPrice, image, badge, isDeal, description, rating },
       { new: true }
     );
     if (!updatedProduct) {

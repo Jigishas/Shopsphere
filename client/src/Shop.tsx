@@ -17,6 +17,8 @@ interface Product {
   image: string;
   badge?: string;
   isDeal: boolean;
+  description?: string;
+  rating?: number; // 0–5
 }
 
 interface CartItem {
@@ -46,6 +48,12 @@ function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const similarProducts = useMemo(() => {
+    if (!selectedProduct) return [];
+    return products
+      .filter(p => p.category === selectedProduct.category && p._id !== selectedProduct._id)
+      .slice(0, 4);
+  }, [products, selectedProduct]);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   useEffect(() => {
@@ -277,11 +285,40 @@ function Shop() {
                       <span className="text-3xl font-bold text-primary">${selectedProduct.price.toFixed(2)}</span>
                       {selectedProduct.originalPrice && <span className="text-lg text-gray-400 line-through">${selectedProduct.originalPrice.toFixed(2)}</span>}
                     </div>
-                    <div className="flex gap-1 mb-6 text-[#c6a69b]">
-                      {[...Array(5)].map((_, i) => (<Star key={i} size={16} fill={i < 4 ? "currentColor" : "none"} />))}
+                    <div className="flex items-center gap-1 mb-6 text-[#c6a69b]">
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <Star
+                          key={i}
+                          size={16}
+                          fill={
+                            i < Math.round(selectedProduct.rating || 0)
+                              ? 'currentColor'
+                              : 'none'
+                          }
+                        />
+                      ))}
+                      <span className="ml-2 text-sm text-gray-500">({(selectedProduct.rating || 0).toFixed(1)})</span>
                     </div>
                     {selectedProduct.badge && <span className="inline-block bg-accent text-white px-3 py-1 rounded-full text-sm font-semibold mb-4">{selectedProduct.badge}</span>}
-                    <p className="text-gray-600 mb-6">Premium quality product from our curated collection. Free shipping on orders over $50.</p>
+                    <p className="text-gray-600 mb-6">{selectedProduct.description || 'Premium quality product from our curated collection. Free shipping on orders over $50.'}</p>
+                    {similarProducts.length > 0 && (
+                      <div className="mb-6">
+                        <h3 className="text-lg font-semibold mb-3">You might also like</h3>
+                        <div className="grid grid-cols-2 gap-3">
+                          {similarProducts.map(p => (
+                            <div key={p._id} className="flex flex-col items-center text-center">
+                              <img src={p.image} alt={p.name} className="w-full h-20 object-cover rounded-md mb-1" />
+                              <span className="text-sm font-medium truncate w-full">{p.name}</span>
+                              <span className="text-primary font-semibold text-sm">${p.price.toFixed(2)}</span>
+                              <button
+                                className="text-xs text-secondary underline mt-1"
+                                onClick={() => setSelectedProduct(p)}
+                              >View</button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     <motion.button type="button" className="w-full flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-secondary" onClick={() => { addToCart(selectedProduct.id); setIsProductModalOpen(false); }} whileTap={{ scale: 0.98 }}>
                       <ShoppingCart size={20} />Add to Cart
                     </motion.button>
