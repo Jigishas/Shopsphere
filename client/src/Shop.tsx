@@ -53,6 +53,10 @@ function Shop() {
   const [filter, setFilter] = useState('all');
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  
+  // Product modal state
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   // Subscribe to toasts
   useEffect(() => {
@@ -461,10 +465,10 @@ function Shop() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => addToCart(product.id)}
+                    onClick={() => { setSelectedProduct(product); setIsProductModalOpen(true); }}
                     className="w-full py-3 rounded-full border border-[#e3d9d5] text-secondary font-semibold hover:bg-[#f5f0ed] transition-colors"
                   >
-                    add to cart
+                    View Product
                   </button>
                 </motion.div>
               ))}
@@ -682,12 +686,12 @@ function Shop() {
                         <motion.button
                           type="button"
                           className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
-                          onClick={() => addToCart(product.id)}
+                          onClick={() => { setSelectedProduct(product); setIsProductModalOpen(true); }}
                           whileTap={{ scale: 0.95 }}
-                          aria-label={`Add ${product.name} to cart`}
+                          aria-label={`View ${product.name}`}
                         >
                           <ShoppingCart size={16} />
-                          Add to Cart
+                          View Product
                         </motion.button>
 
                         <button 
