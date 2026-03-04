@@ -94,7 +94,6 @@ function AppContent() {
   const [error, setError] = useState<string | null>(null);
   const [cart, setCart] = useState<CartItem[]>(loadCartFromStorage);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [email, setEmail] = useState('');
   const [trendingFilter, setTrendingFilter] = useState('all');
   const [hoveredProduct, setHoveredProduct] = useState<number | null>(null);
