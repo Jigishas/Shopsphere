@@ -11,7 +11,15 @@ const productSchema = new mongoose.Schema({
     isDeal: { type: Boolean, default: false },
     // new fields for detailed view
     description: { type: String, default: '' },
-    rating: { type: Number, default: 0 } // average rating (0-5)
+    rating: { type: Number, default: 0 }, // average rating (0-5)
+    comments: [
+      {
+        user: { type: String, required: true },
+        text: { type: String, required: true },
+        rating: { type: Number, min: 0, max: 5, required: true },
+        date: { type: Date, default: Date.now }
+      }
+    ]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Products', productSchema);

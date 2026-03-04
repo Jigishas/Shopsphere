@@ -7,6 +7,13 @@ import { ToastContainer, useToast, subscribeToToasts, type Toast } from './compo
 import { SkeletonGrid, SkeletonCard } from './components/SkeletonLoader';
 import Navbar from './components/Navbar';
 
+interface Comment {
+  user: string;
+  text: string;
+  rating: number;
+  date: string;
+}
+
 interface Product {
   _id: string;
   id: number;
@@ -19,6 +26,7 @@ interface Product {
   isDeal: boolean;
   description?: string;
   rating?: number; // 0–5
+  comments?: Comment[];
 }
 
 interface CartItem {
@@ -54,6 +62,45 @@ function Shop() {
       .filter(p => p.category === selectedProduct.category && p._id !== selectedProduct._id)
       .slice(0, 4);
   }, [products, selectedProduct]);
+
+  // review form state
+  const [commentUser, setCommentUser] = useState('');
+  const [commentText, setCommentText] = useState('');
+  const [commentRating, setCommentRating] = useState(0);
+  const [submittingComment, setSubmittingComment] = useState(false);
+
+  const submitComment = useCallback(async () => {
+    if (!selectedProduct) return;
+    if (!commentUser.trim() || !commentText.trim() || commentRating === 0) {
+      addToast('Please provide name, review and rating', 'info');
+      return;
+    }
+    setSubmittingComment(true);
+    try {
+      const resp = await fetch(
+        `https://shopsphere-p12m.onrender.com/api/products/${selectedProduct._id}/comments`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user: commentUser, text: commentText, rating: commentRating })
+        }
+      );
+      if (!resp.ok) throw new Error('Failed to submit review');
+      const updated: Product = await resp.json();
+      setSelectedProduct(updated);
+      setProducts(prev => prev.map(p => (p._id === updated._id ? updated : p)));
+      addToast('Review submitted!', 'success');
+      setCommentUser('');
+      setCommentText('');
+      setCommentRating(0);
+    } catch (err) {
+      console.error(err);
+      addToast('Unable to submit review', 'error');
+    } finally {
+      setSubmittingComment(false);
+    }
+  }, [commentUser, commentText, commentRating, selectedProduct, addToast]);
+
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
   useEffect(() => {
@@ -319,6 +366,67 @@ function Shop() {
                         </div>
                       </div>
                     )}
+
+                    {/* reviews list */}
+                    {selectedProduct.comments && selectedProduct.comments.length > 0 && (
+                      <div className="mb-6">
+                        <h3 className="text-lg font-semibold mb-3">Customer Reviews</h3>
+                        <div className="space-y-4 max-h-40 overflow-y-auto">
+                          {selectedProduct.comments.map((c, idx) => (
+                            <div key={idx} className="border-b pb-2">
+                              <div className="flex items-center gap-1 mb-1 text-[#c6a69b]">
+                                {Array.from({ length: 5 }, (_, i) => (
+                                  <Star
+                                    key={i}
+                                    size={14}
+                                    fill={i < c.rating ? 'currentColor' : 'none'}
+                                  />
+                                ))}
+                              </div>
+                              <p className="text-sm font-semibold">{c.user}</p>
+                              <p className="text-sm text-gray-600">{c.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* review form */}
+                    <div className="mb-6 border-t pt-4">
+                      <h3 className="text-lg font-semibold mb-3">Leave a review</h3>
+                      <input
+                        type="text"
+                        placeholder="Your name"
+                        value={commentUser}
+                        onChange={e => setCommentUser(e.target.value)}
+                        className="w-full mb-2 p-2 border rounded"
+                      />
+                      <textarea
+                        placeholder="Write your review"
+                        value={commentText}
+                        onChange={e => setCommentText(e.target.value)}
+                        className="w-full mb-2 p-2 border rounded"
+                      />
+                      <div className="flex items-center mb-2">
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <Star
+                            key={i}
+                            size={20}
+                            className={`cursor-pointer ${i < commentRating ? 'text-[#c6a69b]' : 'text-gray-300'}`}
+                            onClick={() => setCommentRating(i + 1)}
+                          />
+                        ))}
+                        <span className="ml-2 text-sm">{commentRating} / 5</span>
+                      </div>
+                      <button
+                        onClick={submitComment}
+                        disabled={submittingComment}
+                        className="bg-secondary text-white px-4 py-2 rounded disabled:opacity-50"
+                      >
+                        {submittingComment ? 'Submitting...' : 'Submit Review'}
+                      </button>
+                    </div>
+
                     <motion.button type="button" className="w-full flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-secondary" onClick={() => { addToCart(selectedProduct.id); setIsProductModalOpen(false); }} whileTap={{ scale: 0.98 }}>
                       <ShoppingCart size={20} />Add to Cart
                     </motion.button>

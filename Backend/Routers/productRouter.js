@@ -8,6 +8,9 @@ router.post('/products', productsControllers.postProduct);
 router.put('/products/:id', productsControllers.putProduct);
 router.delete('/products/:id', productsControllers.deleteproduct);
 
+// user comments/ratings
+router.post('/products/:id/comments', productsControllers.addComment);
+
 
 
 module.exports = router;

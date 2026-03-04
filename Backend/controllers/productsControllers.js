@@ -77,4 +77,26 @@ exports.deleteproduct= async (req, res) => {
   }
 };
 
+// add comment rating
+exports.addComment = async (req, res) => {
+  try {
+    const { user, text, rating } = req.body;
+    if (typeof rating !== 'number' || rating < 0 || rating > 5) {
+      return res.status(400).json({ message: 'Rating must be between 0 and 5' });
+    }
+    const product = await Products.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    product.comments.push({ user, text, rating });
+    // recalc average rating
+    const total = product.comments.reduce((sum, c) => sum + c.rating, 0);
+    product.rating = total / product.comments.length;
+    await product.save();
+    res.json(product);
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding comment', error: error.message });
+  }
+};
+
 //module.exports = { getAllProducts, getProductsById, postProduct, putProduct, deleteproduct};

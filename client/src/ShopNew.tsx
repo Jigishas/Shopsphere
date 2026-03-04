@@ -6,6 +6,13 @@ import ShopFooter from './ShopFooter';
 import { ToastContainer, useToast, subscribeToToasts, type Toast } from './components/Toast';
 import { SkeletonGrid, SkeletonCard } from './components/SkeletonLoader';
 
+interface Comment {
+  user: string;
+  text: string;
+  rating: number;
+  date: string;
+}
+
 interface Product {
   _id: string;
   id: number;
@@ -16,6 +23,9 @@ interface Product {
   image: string;
   badge?: string;
   isDeal: boolean;
+  description?: string;
+  rating?: number;
+  comments?: Comment[];
 }
 
 interface CartItem {
@@ -46,6 +56,51 @@ function Shop() {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+
+  const similarProducts = useMemo(() => {
+    if (!selectedProduct) return [];
+    return products
+      .filter(p => p.category === selectedProduct.category && p._id !== selectedProduct._id)
+      .slice(0, 4);
+  }, [products, selectedProduct]);
+
+  // review form state
+  const [commentUser, setCommentUser] = useState('');
+  const [commentText, setCommentText] = useState('');
+  const [commentRating, setCommentRating] = useState(0);
+  const [submittingComment, setSubmittingComment] = useState(false);
+
+  const submitComment = useCallback(async () => {
+    if (!selectedProduct) return;
+    if (!commentUser.trim() || !commentText.trim() || commentRating === 0) {
+      addToast('Please provide name, review and rating', 'info');
+      return;
+    }
+    setSubmittingComment(true);
+    try {
+      const resp = await fetch(
+        `https://shopsphere-p12m.onrender.com/api/products/${selectedProduct._id}/comments`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ user: commentUser, text: commentText, rating: commentRating })
+        }
+      );
+      if (!resp.ok) throw new Error('Failed to submit review');
+      const updated: Product = await resp.json();
+      setSelectedProduct(updated);
+      setProducts(prev => prev.map(p => (p._id === updated._id ? updated : p)));
+      addToast('Review submitted!', 'success');
+      setCommentUser('');
+      setCommentText('');
+      setCommentRating(0);
+    } catch (err) {
+      console.error(err);
+      addToast('Unable to submit review', 'error');
+    } finally {
+      setSubmittingComment(false);
+    }
+  }, [commentUser, commentText, commentRating, selectedProduct, addToast]);
 
   useEffect(() => {
     return subscribeToToasts(setToasts);
@@ -304,11 +359,99 @@ function Shop() {
                       <span className="text-3xl font-bold text-primary">${selectedProduct.price.toFixed(2)}</span>
                       {selectedProduct.originalPrice && <span className="text-lg text-gray-400 line-through">${selectedProduct.originalPrice.toFixed(2)}</span>}
                     </div>
-                    <div className="flex gap-1 mb-6 text-[#c6a69b]">
-                      {[...Array(5)].map((_, i) => (<Star key={i} size={16} fill={i < 4 ? "currentColor" : "none"} />))}
+                    <div className="flex items-center gap-1 mb-6 text-[#c6a69b]">
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <Star
+                          key={i}
+                          size={16}
+                          fill={
+                            i < Math.round(selectedProduct.rating || 0)
+                              ? 'currentColor'
+                              : 'none'
+                          }
+                        />
+                      ))}
+                      <span className="ml-2 text-sm text-gray-500">({(selectedProduct.rating || 0).toFixed(1)})</span>
                     </div>
                     {selectedProduct.badge && <span className="inline-block bg-accent text-white px-3 py-1 rounded-full text-sm font-semibold mb-4">{selectedProduct.badge}</span>}
-                    <p className="text-gray-600 mb-6">Premium quality product from our curated collection. Free shipping on orders over $50.</p>
+                    <p className="text-gray-600 mb-6">{selectedProduct.description || 'Premium quality product from our curated collection. Free shipping on orders over $50.'}</p>
+                    {similarProducts.length > 0 && (
+                      <div className="mb-6">
+                        <h3 className="text-lg font-semibold mb-3">You might also like</h3>
+                        <div className="grid grid-cols-2 gap-3">
+                          {similarProducts.map(p => (
+                            <div key={p._id} className="flex flex-col items-center text-center">
+                              <img src={p.image} alt={p.name} className="w-full h-20 object-cover rounded-md mb-1" />
+                              <span className="text-sm font-medium truncate w-full">{p.name}</span>
+                              <span className="text-primary font-semibold text-sm">${p.price.toFixed(2)}</span>
+                              <button
+                                className="text-xs text-secondary underline mt-1"
+                                onClick={() => setSelectedProduct(p)}
+                              >View</button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedProduct.comments && selectedProduct.comments.length > 0 && (
+                      <div className="mb-6">
+                        <h3 className="text-lg font-semibold mb-3">Customer Reviews</h3>
+                        <div className="space-y-4 max-h-40 overflow-y-auto">
+                          {selectedProduct.comments.map((c, idx) => (
+                            <div key={idx} className="border-b pb-2">
+                              <div className="flex items-center gap-1 mb-1 text-[#c6a69b]">
+                                {Array.from({ length: 5 }, (_, i) => (
+                                  <Star
+                                    key={i}
+                                    size={14}
+                                    fill={i < c.rating ? 'currentColor' : 'none'}
+                                  />
+                                ))}
+                              </div>
+                              <p className="text-sm font-semibold">{c.user}</p>
+                              <p className="text-sm text-gray-600">{c.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="mb-6 border-t pt-4">
+                      <h3 className="text-lg font-semibold mb-3">Leave a review</h3>
+                      <input
+                        type="text"
+                        placeholder="Your name"
+                        value={commentUser}
+                        onChange={e => setCommentUser(e.target.value)}
+                        className="w-full mb-2 p-2 border rounded"
+                      />
+                      <textarea
+                        placeholder="Write your review"
+                        value={commentText}
+                        onChange={e => setCommentText(e.target.value)}
+                        className="w-full mb-2 p-2 border rounded"
+                      />
+                      <div className="flex items-center mb-2">
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <Star
+                            key={i}
+                            size={20}
+                            className={`cursor-pointer ${i < commentRating ? 'text-[#c6a69b]' : 'text-gray-300'}`}
+                            onClick={() => setCommentRating(i + 1)}
+                          />
+                        ))}
+                        <span className="ml-2 text-sm">{commentRating} / 5</span>
+                      </div>
+                      <button
+                        onClick={submitComment}
+                        disabled={submittingComment}
+                        className="bg-secondary text-white px-4 py-2 rounded disabled:opacity-50"
+                      >
+                        {submittingComment ? 'Submitting...' : 'Submit Review'}
+                      </button>
+                    </div>
+
                     <motion.button type="button" className="w-full flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-secondary" onClick={() => { addToCart(selectedProduct.id); setIsProductModalOpen(false); }} whileTap={{ scale: 0.98 }}>
                       <ShoppingCart size={20} />Add to Cart
                     </motion.button>
