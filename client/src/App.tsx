@@ -7,6 +7,7 @@ import {
   Sparkles, Timer, Loader2, Package
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Navbar from './components/Navbar';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ToastContainer, useToast, subscribeToToasts, type Toast } from './components/Toast';
 import { SkeletonGrid, SkeletonCard, SkeletonHero, SkeletonCategory } from './components/SkeletonLoader';
@@ -227,85 +228,7 @@ function AppContent() {
     <div className="min-h-screen bg-gray-50 text-gray-900 overflow-x-hidden">
       <ToastContainer toasts={toasts} onRemove={(id) => setToasts(prev => prev.filter(t => t.id !== id))} />
 
-      {/* Header */}
-      <header className="bg-gradient-to-r from-primary to-secondary text-white py-3 sticky top-0 z-50 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2 text-xl font-bold cursor-pointer hover:scale-105 transition-transform">
-              <button
-                type="button"
-                className="md:hidden mr-2"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-              >
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              </button>
-              <ShoppingBag className="text-accent w-6 h-6" />
-              <span className="hidden sm:inline">ShopSphere</span>
-            </div>
-            
-            <nav className="hidden md:block">
-              <ul className="flex gap-6 text-sm">
-                <li><Link to="/" className="hover:text-accent transition-colors">Home</Link></li>
-                <li><Link to="/shop" className="hover:text-accent transition-colors">Shop</Link></li>
-                <li><Link to="/categories" className="hover:text-accent transition-colors">Categories</Link></li>
-                <li><Link to="/deals" className="hover:text-accent transition-colors">Deals</Link></li>
-              </ul>
-            </nav>
-
-            <div className="flex items-center gap-3">
-              <div className="relative hidden sm:block">
-                <input 
-                  type="text" 
-                  placeholder="Search..." 
-                  className="pl-3 pr-8 py-1.5 rounded-full bg-white/20 text-white placeholder-white/70 border-none outline-none w-40 lg:w-64 text-sm focus:ring-2 focus:ring-accent transition-all" 
-                />
-                <Search className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-white/70 w-4 h-4" />
-              </div>
-              
-              <Link to="/signup" className="hidden sm:flex items-center gap-1 bg-accent text-white px-3 py-1.5 rounded-full hover:bg-accent/80 transition-colors text-sm">
-                <User className="w-4 h-4" />
-                <span className="hidden lg:inline">Sign Up</span>
-              </Link>
-
-              <button
-                type="button"
-                className="relative cursor-pointer hover:scale-110 transition-transform"
-                onClick={() => setIsCartOpen(!isCartOpen)}
-                aria-label="Open cart"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                {totalItems > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-accent text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                    {totalItems}
-                  </span>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        <div className={`md:hidden ${isMobileMenuOpen ? 'block' : 'hidden'} absolute top-full left-0 right-0 bg-primary text-white py-4 z-50 shadow-lg`}>
-          <div className="container mx-auto px-4 flex flex-col gap-3">
-            <Link to="/" className="hover:text-accent transition-colors py-2" onClick={() => setIsMobileMenuOpen(false)}>Home</Link>
-            <Link to="/shop" className="hover:text-accent transition-colors py-2" onClick={() => setIsMobileMenuOpen(false)}>Shop</Link>
-            <Link to="/categories" className="hover:text-accent transition-colors py-2" onClick={() => setIsMobileMenuOpen(false)}>Categories</Link>
-            <Link to="/deals" className="hover:text-accent transition-colors py-2" onClick={() => setIsMobileMenuOpen(false)}>Deals</Link>
-            <Link to="/about" className="hover:text-accent transition-colors py-2" onClick={() => setIsMobileMenuOpen(false)}>About</Link>
-            <div className="relative mt-2">
-              <input type="text" placeholder="Search products..." className="pl-4 pr-10 py-2 rounded-full bg-white/20 text-white placeholder-white/70 border-none outline-none w-full text-sm" />
-              <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70 w-4 h-4" />
-            </div>
-            <Link to="/signup" className="flex items-center justify-center gap-2 bg-accent text-white px-4 py-2 rounded-full hover:bg-accent/80 transition-colors mt-2" onClick={() => setIsMobileMenuOpen(false)}>
-              <User className="w-4 h-4" />
-              Sign Up
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Navbar totalItems={totalItems} onCartClick={() => setIsCartOpen(!isCartOpen)} />
 
       {/* Hero Section */}
       {loading ? (

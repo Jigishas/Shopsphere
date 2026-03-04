@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 function ShopFooter() {
 
   return (
-    <footer className="bg-secondary text-white py-16">
+    <footer className="bg-secondary dark:bg-secondary/90 text-white dark:text-gray-200 py-16">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>

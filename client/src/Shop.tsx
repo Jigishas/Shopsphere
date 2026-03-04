@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import ShopFooter from './ShopFooter';
 import { ToastContainer, useToast, subscribeToToasts, type Toast } from './components/Toast';
 import { SkeletonGrid, SkeletonCard } from './components/SkeletonLoader';
+import Navbar from './components/Navbar';
 
 interface Product {
   _id: string;
@@ -139,38 +140,10 @@ function Shop() {
   const spotlightProducts = useMemo(() => products.filter(p => p.isDeal || p.badge).slice(0, 3), [products]);
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <ToastContainer toasts={toasts} onRemove={(id) => setToasts(prev => prev.filter(t => t.id !== id))} />
 
-      <header className="bg-gradient-to-r from-primary to-secondary text-white py-4 sticky top-0 z-50 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center">
-            <Link to="/" className="flex items-center gap-3 text-2xl font-bold cursor-pointer hover:scale-105 transition-transform">
-              <ShoppingBag className="text-accent" /><span>ShopSphere</span>
-            </Link>
-            <nav>
-              <ul className="flex gap-6">
-                <li><Link to="/" className="hover:text-accent transition-colors">Home</Link></li>
-                <li><span className="text-accent">Shop</span></li>
-                <li><Link to="/categories" className="hover:text-accent transition-colors">Categories</Link></li>
-                <li><Link to="/deals" className="hover:text-accent transition-colors">Deals</Link></li>
-                <li><Link to="/about" className="hover:text-accent transition-colors">About</Link></li>
-                <li><Link to="/contact" className="hover:text-accent transition-colors">Contact</Link></li>
-              </ul>
-            </nav>
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <input type="text" placeholder="Search products..." value={searchQuery} onChange={handleSearch} className="pl-4 pr-10 py-2 rounded-full bg-white/20 text-white placeholder-white/70 border-none outline-none w-64 focus:ring-2 focus:ring-accent" />
-                {isSearching ? <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70 animate-spin" size={18} /> : <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70" size={18} />}
-              </div>
-              <Link to="/signup" className="flex items-center gap-2 bg-accent text-white px-4 py-2 rounded-full hover:bg-accent/80"><User size={18} />Sign Up</Link>
-              <div className="relative cursor-pointer" onClick={() => setIsCartOpen(!isCartOpen)}>
-                <ShoppingCart size={24} /><span className="absolute -top-2 -right-2 bg-accent text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">{totalItems}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar totalItems={totalItems} onCartClick={() => setIsCartOpen(!isCartOpen)} />
 
       {/* SHOP SPOTLIGHT SECTION */}
       <section className="py-16 px-4 bg-[#faf8f7] rounded-[60px] mx-4 my-8">
@@ -182,21 +155,21 @@ function Shop() {
           {loading ? <SkeletonGrid count={3} /> : spotlightProducts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {spotlightProducts.map((product) => (
-                <div key={product._id} className="bg-white rounded-[32px] p-6 shadow-sm hover:shadow-lg">
-                  <div className="bg-[#ece3e0] h-48 rounded-3xl overflow-hidden mb-6">
+                <div key={product._id} className="bg-white dark:bg-gray-800 rounded-[32px] p-6 shadow-sm hover:shadow-lg transition-shadow">
+                  <div className="bg-[#ece3e0] dark:bg-gray-700 h-48 rounded-3xl overflow-hidden mb-6">
                     <img src={product.image} alt={product.name} className="w-full h-full object-cover hover:scale-110 transition-transform" loading="lazy" />
                   </div>
-                  <p className="text-xs uppercase tracking-widest text-[#a18882] font-semibold mb-2">{product.category}</p>
+                  <p className="text-xs uppercase tracking-widest text-[#a18882] dark:text-gray-400 font-semibold mb-2">{product.category}</p>
                   <h3 className="text-xl font-bold text-secondary mb-2">{product.name}</h3>
                   <div className="flex items-center gap-3 mb-3">
                     <span className="text-xl font-bold text-secondary">${product.price}</span>
-                    {product.originalPrice && <span className="text-gray-400 line-through">${product.originalPrice}</span>}
+                    {product.originalPrice && <span className="text-gray-400 line-through dark:text-gray-500">${product.originalPrice}</span>}
                   </div>
-                  <button type="button" aria-label={`View ${product.name}`} onClick={() => { setSelectedProduct(product); setIsProductModalOpen(true); }} className="w-full py-3 rounded-full border border-[#e3d9d5] text-secondary font-semibold hover:bg-[#f5f0ed]">View Product</button>
+                  <button type="button" aria-label={`View ${product.name}`} onClick={() => { setSelectedProduct(product); setIsProductModalOpen(true); }} className="w-full py-3 rounded-full border border-[#e3d9d5] text-secondary font-semibold hover:bg-[#f5f0ed] dark:hover:bg-gray-700">View Product</button>
                 </div>
               ))}
             </div>
-          ) : <div className="text-center py-12"><Package className="w-16 h-16 mx-auto text-gray-300" /><p className="text-gray-500 mt-4">No products available</p></div>}
+          ) : <div className="text-center py-12"><Package className="w-16 h-16 mx-auto text-gray-300 dark:text-gray-500" /><p className="text-gray-500 dark:text-gray-400 mt-4">No products available</p></div>}
         </div>
       </section>
 
