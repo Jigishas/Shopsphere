@@ -6,7 +6,8 @@ const User=require('../model/users');
 
 exports.getusers = async (req,res)=>{
     try{
-      if (isAdmin){
+      isAdmin=false;
+      if (isAdmin==true){
     const users=await User.find();
     res.status(200).json({message: 'successful', users});
     console.log(users)
@@ -49,6 +50,7 @@ exports.postusers=async (req,res)=>{
           process.env.JWT_SECRET || 'your-secret-key',
           { expiresIn: '24h' }
         );
+        console.log(token)
     
         res.status(201).json({
           message: 'User created successfully',
@@ -57,7 +59,7 @@ exports.postusers=async (req,res)=>{
             id: savedUser._id, 
             name: savedUser.name, 
             email: savedUser.email,
-            isAdmin: savedUser.isAdmin 
+            isAdmin: savedUser.isAdmin   
           }
         });
       } catch (error) {
