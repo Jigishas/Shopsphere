@@ -284,7 +284,7 @@ function Signup() {
                   autoComplete="email"
                   required
                   disabled={isLoading}
-                  className={`appearance-none rounded-none relative block w-full px-10 py-3 border placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm ${
+                  className={`appearance-none rounded-none relative block w-full px-10 py-3 border placeholder-gray-500 text-gray-900 dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm ${
                     formErrors.email ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder="Email address"
@@ -313,7 +313,7 @@ function Signup() {
                   autoComplete="new-password"
                   required
                   disabled={isLoading}
-                  className={`appearance-none rounded-none relative block w-full px-10 pr-12 py-3 border placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm ${
+                  className={`appearance-none rounded-none relative block w-full px-10 pr-12 py-3 border placeholder-gray-500 text-gray-900 dark:bg-gray-700 dark:text-gray-100 focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm ${
                     formErrors.password ? 'border-red-300' : 'border-gray-300'
                   }`}
                   placeholder="Password"
