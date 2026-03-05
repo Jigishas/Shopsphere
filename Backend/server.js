@@ -49,9 +49,6 @@ app.use(cors({
 }));
 
 
-app.get('/', (req, res) => {
-  res.send('Backend is running...');
-});
 
 app.use('/api', router);
 // The cors middleware handles preflight requests automatically
@@ -60,12 +57,13 @@ app.use('/api/users', userRouter);
 
 // Connect to MongoDB
 const connectDB = async () => {
+  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/shopsphere';
   try {
-    await mongoose.connect(process.env.MONGODB_URI, {   
+    await mongoose.connect(uri, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     });
-    console.log('MongoDB connected successfully');
+    console.log('MongoDB connected successfully to', uri);
   } catch (error) {
     console.error('MongoDB connection error:', error);
   }

@@ -10,7 +10,7 @@ const testData = JSON.stringify({
 // Request options
 const options = {
   hostname: 'localhost',
-  port: 3001,
+  port: 3000, // backend default port
   path: '/api/users/signup',
 
 
