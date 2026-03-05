@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const Products = require('./model/products');
 const User = require('./model/users');
 const userRouter = require('./Routers/UsersRouter');
@@ -77,60 +78,66 @@ app.get('/api/health', (req, res) => {
 
 
 // Login endpoint
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
 
-// app.post('/api/login', async (req, res) => {
-//   const { email, password } = req.body;
+  // Basic validation
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
+  }
 
-//   // Basic validation
-//   if (!email || !password) {
-//     return res.status(400).json({ message: 'Email and password are required' });
-//   }
+  try {
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
 
-//   try {
-//     // Find user
-//     const user = await User.findOne({ email });
-//     if (!user) {
-//       return res.status(401).json({ message: 'Invalid email or password' });
-//     }
+    // Check password using bcrypt comparison
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Invalid email or password' });
+    }
 
-//     // Check password using bcrypt comparison
-//     const isPasswordValid = await user.comparePassword(password);
-//     if (!isPasswordValid) {
-//       return res.status(401).json({ message: 'Invalid email or password' });
-//     }
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email, isAdmin: user.isAdmin },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '24h' }
+    );
+
+    res.status(200).json({
+      message: 'Login successful',
+      token,
+      user: { id: user._id, name: user.name, email: user.email, isAdmin: user.isAdmin }
+    });
+  } catch (error) {
+    console.error('Error logging in:', error);
+    res.status(500).json({ message: 'Error logging in', error: error.message });
+  }
+});
 
 
-//     res.status(200).json({
-//       message: 'Login successful',
-//       user: { id: user._id, name: user.name, email: user.email, isAdmin: user.isAdmin }
-//     });
-//   } catch (error) {
-//     console.error('Error logging in:', error);
-//     res.status(500).json({ message: 'Error logging in', error: error.message });
-//   }
-// });
+// Contact form endpoint
+app.post('/api/contact', (req, res) => {
+  const { name, email, subject, message } = req.body;
 
+  // Basic validation
+  if (!name || !email || !subject || !message) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
 
-// // Contact form endpoint
-// app.post('/api/contact', (req, res) => {
-//   const { name, email, subject, message } = req.body;
+  // In a real application you'd persist this to a database or send an email.
+  // For now, return a success response so the frontend receives confirmation.
+  try {
+    // TODO: implement saving or emailing the contact message (e.g., nodemailer)
+    return res.status(200).json({ message: 'Contact message received' });
+  } catch (error) {
+    console.error('Error handling contact form:', error);
+    return res.status(500).json({ message: 'Error processing contact form', error: error.message });
+  }
 
-//   // Basic validation
-//   if (!name || !email || !subject || !message) {
-//     return res.status(400).json({ message: 'All fields are required' });
-//   }
-
-//   // In a real application you'd persist this to a database or send an email.
-//   // For now, return a success response so the frontend receives confirmation.
-//   try {
-//     // TODO: implement saving or emailing the contact message (e.g., nodemailer)
-//     return res.status(200).json({ message: 'Contact message received' });
-//   } catch (error) {
-//     console.error('Error handling contact form:', error);
-//     return res.status(500).json({ message: 'Error processing contact form', error: error.message });
-//   }
-
-// });
+});
 
 // // Use the Products model directly for fetching products to resolve the unused import warning
 // app.get('/api/products-direct', async (req, res) => {

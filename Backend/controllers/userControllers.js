@@ -6,8 +6,9 @@ const User=require('../model/users');
 
 exports.getusers = async (req,res)=>{
     try{
-      isAdmin=false;
-      if (isAdmin==true){
+      // Check if user is admin from request (would typically come from JWT token)
+      const isAdmin = req.headers['x-admin'] === 'true' || false;
+      if (isAdmin){
     const users=await User.find();
     res.status(200).json({message: 'successful', users});
     console.log(users)
